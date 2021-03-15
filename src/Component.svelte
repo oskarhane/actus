@@ -176,7 +176,7 @@
         border-top-left-radius: 4px;
         border-top-right-radius: 4px;
         border: 0;
-        width: 100%;
+        width: calc(400px - 1rem);
         margin: 0;
         color: var(--color, #000);
         background-color: var(--background-color, rgba(255, 255, 255, 1));
