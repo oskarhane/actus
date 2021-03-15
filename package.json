@@ -8,7 +8,7 @@
         "name": "Oskar Hane",
         "url": "https://twitter.com/oskarhane"
     },
-    "license": "Apache-2.0",
+    "license": "MIT",
     "scripts": {
         "prebuild": "rm -rf ./dist",
         "build": "rollup -c",
