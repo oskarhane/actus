@@ -1,1 +1,2 @@
-export { default as Commander } from "./Component.svelte";
+import Component from "./Component.svelte";
+export default Component;
