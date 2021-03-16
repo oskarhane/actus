@@ -4,7 +4,7 @@ export type Command = {
     description: CommandDescription;
     exec: ExecutionFunction;
 };
-export type ExecutionFunction = (command: Command) => void;
+export type ExecutionFunction = (command: Command, input: string) => void;
 export type CommandDescription = string | CommandDescriptionFn;
 export type CommandDescriptionFn = () => string;
 export interface RankCommand extends Command {

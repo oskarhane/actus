@@ -140,7 +140,7 @@ export const selectionMachine = createMachine<Context>(
                 const id: string = event.id || context.selectedId;
                 const executedCommand = context.commands.filter((c) => c.id === id);
                 if (executedCommand && executedCommand.length) {
-                    executedCommand[0].exec(executedCommand[0]);
+                    executedCommand[0].exec(executedCommand[0], context.input);
                 }
                 callback({ type: "EXEC_DONE", id, input: context.input });
             },

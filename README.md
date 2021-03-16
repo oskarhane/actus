@@ -54,7 +54,7 @@ type Command = {
 };
 type CommandDescription = string | CommandDescriptionFn;
 type CommandDescriptionFn = () => string;
-type ExecutionFunction = (command: Command) => void;
+type ExecutionFunction = (command: Command, input: string) => void;
 ```
 
 ## Demo
