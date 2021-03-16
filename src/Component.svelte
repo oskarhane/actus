@@ -5,6 +5,11 @@
     import { selectionMachine } from "./selection-machine";
     import type { Command, CommandDescription, ExecDetail, SortFunction, Theme } from "./types";
 
+    // Local vars
+    let results: Command[] = [];
+    const dispatch = createEventDispatcher();
+
+    // Exports / API
     export let theme: Theme = {
         "--active-result-background-color": "",
         "--background-color": "",
@@ -18,8 +23,8 @@
     export let commands: Command[] = [];
     export let toggleKey: string = "p";
     export let placeholder: string = "Type something";
-    let results: Command[] = [];
 
+    // Start machine
     let selectionService = interpret(
         selectionMachine.withContext({
             ...selectionMachine.context,
@@ -29,6 +34,7 @@
         })
     ).start();
 
+    // Expose toggle funtion so the outside can toggle visibility
     // eslint-disable-next-line
     export const toggle = () => {
         if ($selectionService.matches("open")) {
@@ -37,18 +43,37 @@
         }
         selectionService.send("OPEN");
     };
+
+    // Machine interactions
+    $: if (commands.length) {
+        selectionService.send("NEW_COMMANDS", { commands });
+    }
+    function changed(e: Event & { currentTarget: EventTarget & HTMLInputElement }) {
+        selectionService.send("INPUT", { input: e.currentTarget.value });
+    }
+
+    // Machine listeners
+    $: results = $selectionService.context.resultIds.map((id) =>
+        reslutIdToCommand($selectionService.context.commands, id)
+    );
+    selectionService.onEvent((event: { type: string; id?: string; input?: string }) => {
+        if (event.type === "EXEC_DONE") {
+            resultExec(event.id, event.input);
+        }
+    });
+
+    // HTML Events for outer component to listen on
+    function resultExec(id: string, input: string) {
+        const payload: ExecDetail = { id, input };
+        dispatch("execute", payload);
+    }
     $: if ($selectionService.matches("open")) {
         dispatch("open");
     } else {
         dispatch("close");
     }
 
-    const dispatch = createEventDispatcher();
-
-    $: if (commands.length) {
-        selectionService.send("NEW_COMMANDS", { commands });
-    }
-
+    // Helper functions
     function focus(e: HTMLInputElement) {
         e.focus();
     }
@@ -58,25 +83,10 @@
         }
         return descr();
     }
-    function changed(e: Event & { currentTarget: EventTarget & HTMLInputElement }) {
-        selectionService.send("INPUT", { input: e.currentTarget.value });
-    }
-    function resultExec(id: string, input: string) {
-        const payload: ExecDetail = { id, input };
-        dispatch("execute", payload);
-    }
     function reslutIdToCommand(commands: Command[], resultId: string): Command {
         const cmd = commands.filter((c) => c.id === resultId);
         return cmd[0];
     }
-    $: results = $selectionService.context.resultIds.map((id) =>
-        reslutIdToCommand($selectionService.context.commands, id)
-    );
-    selectionService.onEvent((event: { type: string; id?: string; input?: string }) => {
-        if (event.type === "EXEC_DONE") {
-            resultExec(event.id, event.input);
-        }
-    });
 </script>
 
 {#if $selectionService.matches("open")}
