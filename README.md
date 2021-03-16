@@ -45,7 +45,11 @@ type CommandDescriptionFn = () => string;
 type ExecutionFunction = (command: Command) => void;
 ```
 
-### User Interactions
+## Demo
+
+Here's a demo: [https://ti99l.csb.app](https://ti99l.csb.app)
+
+## States and transitions
 
 **Open / Close**
 
