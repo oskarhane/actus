@@ -10,6 +10,18 @@ You see this kind of UI in many application nowadays. `Ctrl/cmd + k` in Slack an
 
 ## Component Usage
 
+Install it in your Svelte project with:
+
+```bash
+npm install svelte-commander
+```
+
+and import it
+
+```svelte
+import Commander from 'svelte-commander'
+```
+
 As mentioned, it should be trivial to implement this in any UI framework, have a look in [src/Component.svelte](src/Component.svelte) to see how it's made using Svelte.
 
 All props except `commands` are optional.
