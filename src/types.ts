@@ -4,7 +4,7 @@ export type Command = {
     description: CommandDescription;
     exec: ExecutionFunction;
 };
-export type ExecutionFunction = (command: Command, input: string) => void;
+export type ExecutionFunction = (command: Command, input: ParserResult) => void;
 export type CommandDescription = string | CommandDescriptionFn;
 export type CommandDescriptionFn = () => string;
 export interface RankCommand extends Command {
@@ -19,7 +19,7 @@ export type ExecPayload = {
 };
 export type ExecDetail = {
     id: string;
-    input: string;
+    input: ParserResult;
 };
 
 export type Theme = {
@@ -33,3 +33,8 @@ export type Theme = {
 };
 
 export type SortFunction = (commands: Command[], input: string) => Command[];
+
+export type ParserResult = [string, ParserParams];
+export type ParserParams = {
+    [key: string]: string;
+};

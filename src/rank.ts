@@ -1,22 +1,33 @@
 import nearley from "nearley";
 import grammar from "./grammar/input-parser";
-import type { Command, RankCommand } from "./types";
+import type { Command, ParserResult, RankCommand } from "./types";
 
 const FULL = 10;
 const FIRST_IN_WORDS = 7;
 const STARTS = 5;
 const HAS = 4;
 
+export function parseInput(input: string): ParserResult {
+    try {
+        const parser = new nearley.Parser(nearley.Grammar.fromCompiled(grammar));
+        parser.feed(input);
+        const parserResult: ParserResult = parser.results[0] as ParserResult;
+        if (parserResult.length !== 2) {
+            throw Error(`Could not parse "${input}"`);
+        }
+        return parserResult;
+    } catch (e) {}
+    return [input, {}];
+}
+
 export function ranks(commands: Command[], input: string): Command[] {
-    input = input.toLowerCase();
-    const parser = new nearley.Parser(nearley.Grammar.fromCompiled(grammar));
-    console.log("input: ", input);
-    parser.feed(input);
-    console.log(parser.results);
+    const parsedInput = parseInput(input);
+    const inputCmd = parsedInput[0].toLowerCase();
     const r: Command[] = commands
         .map(
             (c: Command): RankCommand => {
-                const rank = full(c, input) || firstInWords(c, input) || starts(c, input) || has(c, input) || 0;
+                const rank =
+                    full(c, inputCmd) || firstInWords(c, inputCmd) || starts(c, inputCmd) || has(c, inputCmd) || 0;
                 return { ...c, rank };
             }
         )

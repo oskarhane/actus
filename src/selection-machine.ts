@@ -1,4 +1,5 @@
 import { createMachine, assign } from "xstate";
+import { parseInput } from "./rank";
 import type { Command, SortFunction } from "./types";
 type Context = {
     resultIds: string[];
@@ -138,11 +139,12 @@ export const selectionMachine = createMachine<Context>(
             },
             exec: (context, event) => (callback) => {
                 const id: string = event.id || context.selectedId;
+                const parsedInput = parseInput(context.input);
                 const executedCommand = context.commands.filter((c) => c.id === id);
                 if (executedCommand && executedCommand.length) {
-                    executedCommand[0].exec(executedCommand[0], context.input);
+                    executedCommand[0].exec(executedCommand[0], parsedInput);
                 }
-                callback({ type: "EXEC_DONE", id, input: context.input });
+                callback({ type: "EXEC_DONE", id, input: parsedInput });
             },
         },
         actions: {

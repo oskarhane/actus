@@ -3,7 +3,7 @@
     import { interpret } from "xstate";
     import { ranks } from "./rank";
     import { selectionMachine } from "./selection-machine";
-    import type { Command, CommandDescription, ExecDetail, SortFunction, Theme } from "./types";
+    import type { Command, CommandDescription, ExecDetail, ParserResult, SortFunction, Theme } from "./types";
 
     // Local vars
     let results: Command[] = [];
@@ -56,14 +56,14 @@
     $: results = $selectionService.context.resultIds.map((id) =>
         reslutIdToCommand($selectionService.context.commands, id)
     );
-    selectionService.onEvent((event: { type: string; id?: string; input?: string }) => {
+    selectionService.onEvent((event: { type: string; id?: string; input?: ParserResult }) => {
         if (event.type === "EXEC_DONE") {
             resultExec(event.id, event.input);
         }
     });
 
     // HTML Events for outer component to listen on
-    function resultExec(id: string, input: string) {
+    function resultExec(id: string, input: ParserResult) {
         const payload: ExecDetail = { id, input };
         dispatch("execute", payload);
     }
@@ -107,8 +107,9 @@
         </div>
         {#if results.length}
             <div class="results">
-                {#each results as result}
+                {#each results as result, resultIndex}
                     <div
+                        data-testid={`test-id-${resultIndex}`}
                         class:active={$selectionService.context.selectedId === result.id}
                         on:mousedown={() => selectionService.send("EXEC", { id: result.id })}
                         on:mouseover={() => selectionService.send("SELECT", { id: result.id })}
