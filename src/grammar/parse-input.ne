@@ -1,3 +1,5 @@
+@preprocessor typescript
+
 main -> cmd params _ {% d => [d[0], d[1]]%}
 	  | cmd _ {% d => [d[0]] %}
 
@@ -14,7 +16,8 @@ paramVal -> paramValToken {% id %}
 
 FLAG_START -> _ "-" {% null %}
 
-cmdToken -> [^- ] [^-]:+ [^- ] {% d => [d[0], d[1].join(''), d[2]].join('') %}
+cmdToken -> [^- ]:+ (" ":+ [^- ]:+):* {% d => [d[0].join('')].concat(...d[1].map(dd => [].concat(...dd))).join('') %}
+
 paramValToken -> [^- ]:+ {% d => d[0].join('') %}
 
 _ -> [ ]:* {% () => null %}

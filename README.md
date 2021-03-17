@@ -54,7 +54,11 @@ type Command = {
 };
 type CommandDescription = string | CommandDescriptionFn;
 type CommandDescriptionFn = () => string;
-type ExecutionFunction = (command: Command, input: string) => void;
+type ExecutionFunction = (command: Command, input: ParserResult) => void;
+type ParserResult = [string, ParserParams];
+type ParserParams = {
+    [key: string]: string;
+};
 ```
 
 ## Demo
