@@ -102,3 +102,13 @@ Have a look at [src/selection-machine.ts](src/selection-machine.ts) to see the m
 
 Here's a visaulization of the machine:
 ![vis](images/vis.png)
+
+## Todo
+
+[ ] Make it self learning using a in memory tree that can be loaded and downloaded
+
+[ ] Stepping doesn't scroll the items into view
+
+[ ] Clicking outside should close it
+
+[ ] Allow for params to have quoted strings
