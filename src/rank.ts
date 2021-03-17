@@ -12,12 +12,12 @@ export function parseInput(input: string): ParserResult {
         const parser = new nearley.Parser(nearley.Grammar.fromCompiled(grammar));
         parser.feed(input);
         const parserResult: ParserResult = parser.results[0] as ParserResult;
-        if (parserResult.length !== 2) {
+        if (parserResult.length < 1) {
             throw Error(`Could not parse "${input}"`);
         }
         return parserResult;
     } catch (e) {}
-    return [input, {}];
+    return [input.trim()];
 }
 
 export function ranks(commands: Command[], input: string): Command[] {

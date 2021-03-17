@@ -34,7 +34,7 @@ export type Theme = {
 
 export type SortFunction = (commands: Command[], input: string) => Command[];
 
-export type ParserResult = [string, ParserParams];
+export type ParserResult = [string] | [string, ParserParams];
 type ParserParams = {
     [key: string]: string;
 };

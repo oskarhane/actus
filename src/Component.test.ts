@@ -27,7 +27,7 @@ test("should show single command and execute", async () => {
     userEvent.keyboard("o");
     await flush();
 
-    userEvent.keyboard("ti");
+    userEvent.keyboard("ti ");
     await flush();
 
     expect(() => getByText(/title 1/i)).not.toThrow();
@@ -35,7 +35,7 @@ test("should show single command and execute", async () => {
 
     userEvent.keyboard("{enter}");
     await flush();
-    expect(exec).toHaveBeenCalledWith(command1, ["ti", {}]);
+    expect(exec).toHaveBeenCalledWith(command1, ["ti"]);
     expect(() => getByPlaceholderText(/type for the/i)).toThrow();
 });
 

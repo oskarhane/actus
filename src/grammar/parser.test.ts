@@ -11,6 +11,12 @@ test("should parse commands only correctly", () => {
     let parserResult: ParserResult = parser.results[0] as ParserResult;
     expect(parserResult).toEqual(["t"]);
 
+    input = "t ";
+    parser = newParser();
+    parser.feed(input);
+    parserResult = parser.results[0] as ParserResult;
+    expect(parserResult).toEqual(["t"]);
+
     input = "ttt";
     parser = newParser();
     parser.feed(input);
