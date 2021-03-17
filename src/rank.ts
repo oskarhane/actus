@@ -1,4 +1,8 @@
+import nearley from "nearley";
+import grammar from "./grammar/input-parser";
 import type { Command, RankCommand } from "./types";
+
+const parser = new nearley.Parser(nearley.Grammar.fromCompiled(grammar));
 
 const FULL = 10;
 const FIRST_IN_WORDS = 7;
@@ -7,6 +11,8 @@ const HAS = 4;
 
 export function ranks(commands: Command[], input: string): Command[] {
     input = input.toLowerCase();
+    parser.feed(input);
+    console.log(parser.results);
     const r: Command[] = commands
         .map(
             (c: Command): RankCommand => {

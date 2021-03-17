@@ -14,16 +14,19 @@
         "build": "rollup -c",
         "dev": "rollup -c -w",
         "validate": "svelte-check",
-        "prepublishOnly": "npm run build"
+        "prepublishOnly": "npm run build",
+        "build:grammar": "nearleyc src/grammar/parse-input.ne > src/grammar/input-parser.ts"
     },
     "files": [
         "src",
         "dist"
     ],
     "devDependencies": {
+        "@rollup/plugin-commonjs": "^17.1.0",
         "@rollup/plugin-node-resolve": "^9.0.0",
         "@rollup/plugin-typescript": "^6.0.0",
         "@tsconfig/svelte": "^1.0.10",
+        "@types/nearley": "^2.11.1",
         "fs-extra": "^9.0.1",
         "glob": "^7.1.6",
         "rollup": "^2.32.0",
@@ -43,6 +46,7 @@
         "command"
     ],
     "dependencies": {
+        "nearley": "^2.20.1",
         "xstate": "^4.16.2"
     },
     "version": "1.0.2"
