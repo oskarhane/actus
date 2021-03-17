@@ -1,7 +1,7 @@
 <script lang="ts">
     import { createEventDispatcher } from "svelte";
     import { interpret } from "xstate";
-    import { ranks } from "./rank.js";
+    import { ranks } from "./rank";
     import { selectionMachine } from "./selection-machine";
     import type { Command, CommandDescription, ExecDetail, SortFunction, Theme } from "./types";
 

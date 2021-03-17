@@ -108,8 +108,8 @@ export const selectionMachine = createMachine<Context>(
                         callback("OPEN");
                     }
                 };
-                document.addEventListener("keydown", toggleFn);
-                return () => document.removeEventListener("keydown", toggleFn);
+                document.addEventListener("keyup", toggleFn);
+                return () => document.removeEventListener("keyup", toggleFn);
             },
             setupInteractionListener: () => (callback) => {
                 const listenerFn = (e: KeyboardEvent) => {
