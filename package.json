@@ -60,6 +60,9 @@
     },
     "version": "1.0.3",
     "jest": {
+        "modulePathIgnorePatterns": [
+            "<rootDir>/dist/"
+        ],
         "transform": {
             "^.+\\.svelte$": [
                 "svelte-jester",
