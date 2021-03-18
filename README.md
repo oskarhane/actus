@@ -110,5 +110,3 @@ Here's a visaulization of the machine:
 [ ] Stepping doesn't scroll the items into view
 
 [ ] Clicking outside should close it
-
-[ ] Allow for params to have quoted strings
