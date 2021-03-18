@@ -58,7 +58,7 @@
         "nearley": "^2.20.1",
         "xstate": "^4.16.2"
     },
-    "version": "1.0.6",
+    "version": "1.0.7",
     "jest": {
         "modulePathIgnorePatterns": [
             "<rootDir>/dist/"
