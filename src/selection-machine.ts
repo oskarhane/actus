@@ -171,7 +171,14 @@ export const selectionMachine = createMachine<Context>(
                     return event.commands;
                 },
                 resultIds: (context, event) => {
-                    return context.input.length ? context.sortFn(event.commands, context.input).map((r) => r.id) : [];
+                    if (context.input.length) {
+                        const results = context.sortFn(event.commands, context.input);
+                        if (results !== null) {
+                            return results.map((r) => r.id);
+                        }
+                        return context.resultIds;
+                    }
+                    return [];
                 },
             }),
             step: assign({
