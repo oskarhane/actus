@@ -136,3 +136,42 @@ test("should not break on non parseable input", async () => {
     expect(exec).toHaveBeenCalledWith(command1, ["x", { e: null }]);
     expect(() => getByText(/xxx/)).toThrow();
 });
+test("should keep open on inside clicks and close on outer", async () => {
+    const exec = jest.fn();
+    const command1 = { id: "1", title: "isopen", description: "x", exec };
+    const commands: Command[] = [command1];
+    const { getByPlaceholderText, getByText } = render(Component, {
+        props: { commands, placeholder: "Type for the test", toggleKey: "o" },
+    });
+    userEvent.keyboard("o");
+    await flush();
+    userEvent.keyboard(`iso`);
+    await flush();
+
+    // Click input
+    userEvent.click(getByPlaceholderText(/type for/i));
+    await flush();
+
+    expect(() => getByPlaceholderText(/type for/i)).not.toThrow();
+
+    // Click body
+    userEvent.click(document.body);
+    await flush();
+
+    expect(() => getByPlaceholderText(/type for/i)).toThrow();
+
+    // open again
+    userEvent.keyboard("o");
+    await flush();
+
+    // Check so the last value is around
+    // @ts-ignore
+    expect(getByPlaceholderText(/type for/i).value).toBe("iso");
+
+    // Click result
+    userEvent.click(getByText(/isopen/));
+    await flush();
+
+    expect(exec).toHaveBeenCalledTimes(1);
+    expect(() => getByPlaceholderText(/type for/i)).toThrow();
+});
