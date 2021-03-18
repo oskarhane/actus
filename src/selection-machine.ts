@@ -35,7 +35,7 @@ export const selectionMachine = createMachine<Context>(
                     CLOSE: "closed",
                     EXEC: {
                         target: ".executing",
-                        cond: "nonEmpty",
+                        cond: "isExecutable",
                     },
                     SELECT: {
                         actions: "select",
@@ -151,7 +151,14 @@ export const selectionMachine = createMachine<Context>(
             saveInputAndResults: assign({
                 input: (_, event) => event.input,
                 resultIds: (context, event) => {
-                    return event.input.length ? context.sortFn(context.commands, event.input).map((r) => r.id) : [];
+                    if (event.input.length) {
+                        const results = context.sortFn(context.commands, event.input);
+                        if (results !== null) {
+                            return results.map((r) => r.id);
+                        }
+                        return context.resultIds;
+                    }
+                    return [];
                 },
             }),
             clearInputAndResults: assign({ input: () => "", resultIds: () => [] }),
@@ -190,7 +197,8 @@ export const selectionMachine = createMachine<Context>(
         },
         guards: {
             selectedExists: (context) => context.resultIds.includes(context.selectedId),
-            nonEmpty: (context) => context.input.length > 0 && context.resultIds.length > 0,
+            isExecutable: (context) =>
+                context.input.length > 0 && context.resultIds.length > 0 && context.sortFn([], context.input) !== null,
         },
     }
 );

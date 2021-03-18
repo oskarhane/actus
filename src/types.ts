@@ -32,7 +32,7 @@ export type Theme = {
     "--scale"?: string;
 };
 
-export type SortFunction = (commands: Command[], input: string) => Command[];
+export type SortFunction = (commands: Command[], input: string) => Command[] | null;
 
 export type ParserResult = [string] | [string, ParserParams];
 type ParserParams = {

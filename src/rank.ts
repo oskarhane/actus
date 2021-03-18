@@ -7,7 +7,7 @@ const FIRST_IN_WORDS = 7;
 const STARTS = 5;
 const HAS = 4;
 
-export function parseInput(input: string): ParserResult {
+export function parseInput(input: string): ParserResult | null {
     try {
         const parser = new nearley.Parser(nearley.Grammar.fromCompiled(grammar));
         parser.feed(input);
@@ -16,12 +16,17 @@ export function parseInput(input: string): ParserResult {
             throw Error(`Could not parse "${input}"`);
         }
         return parserResult;
-    } catch (e) {}
+    } catch (e) {
+        return null;
+    }
     return [input.trim()];
 }
 
-export function ranks(commands: Command[], input: string): Command[] {
+export function ranks(commands: Command[], input: string): Command[] | null {
     const parsedInput = parseInput(input);
+    if (parsedInput === null) {
+        return null;
+    }
     const inputCmd = parsedInput[0].toLowerCase();
     const r: Command[] = commands
         .map(

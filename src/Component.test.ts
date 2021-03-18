@@ -100,3 +100,39 @@ test("should strip double quotes", async () => {
 
     expect(exec).toHaveBeenCalledWith(command1, ["x", { e: `my space` }]);
 });
+
+test("should not break on non parseable input", async () => {
+    const exec = jest.fn();
+    const command1 = { id: "1", title: "xxx", description: "x", exec };
+    const commands: Command[] = [command1];
+    const { getByText } = render(Component, {
+        props: { commands, placeholder: "Type for the test", toggleKey: "o" },
+    });
+    userEvent.keyboard("o");
+    await flush();
+
+    userEvent.keyboard(`x`);
+    await flush();
+
+    expect(() => getByText(/xxx/)).not.toThrow();
+
+    userEvent.keyboard(` -e "`); // input is now: x -e "
+    await flush();
+
+    expect(() => getByText(/xxx/)).not.toThrow();
+
+    userEvent.keyboard(`{enter}`);
+    await flush();
+
+    expect(exec).not.toHaveBeenCalled();
+    expect(() => getByText(/xxx/)).not.toThrow();
+
+    userEvent.keyboard(`{backspace}`);
+    await flush();
+
+    userEvent.keyboard(`{enter}`);
+    await flush();
+
+    expect(exec).toHaveBeenCalledWith(command1, ["x", { e: null }]);
+    expect(() => getByText(/xxx/)).toThrow();
+});
