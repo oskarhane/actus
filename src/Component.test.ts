@@ -1,4 +1,4 @@
-import { render, fireEvent, screen } from "@testing-library/svelte";
+import { render } from "@testing-library/svelte";
 import userEvent from "@testing-library/user-event";
 import Component from "./Component.svelte";
 import type { Command } from "./types";
@@ -45,7 +45,7 @@ test("stepping should work", async () => {
     const command1 = { id: "1", title: "Title 1", description: "Description 1", exec };
     const command2 = { id: "2", title: "Second command", description: "Description 2", exec: exec2 };
     const commands: Command[] = [command1, command2];
-    const { debug, getByTestId, getByText } = render(Component, {
+    const { getByTestId, getByText } = render(Component, {
         props: { commands, placeholder: "Type for the test", toggleKey: "o" },
     });
     userEvent.keyboard("o");
@@ -83,4 +83,20 @@ test("stepping should work", async () => {
     await flush();
 
     expect(exec).toHaveBeenCalledWith(command1, ["e", { force: null, g: "gParam", p: "12" }]);
+});
+
+test("should strip double quotes", async () => {
+    const exec = jest.fn();
+    const command1 = { id: "1", title: "x", description: "x", exec };
+    const commands: Command[] = [command1];
+    render(Component, {
+        props: { commands, placeholder: "Type for the test", toggleKey: "o" },
+    });
+    userEvent.keyboard("o");
+    await flush();
+
+    userEvent.keyboard(`x -e "my space" {enter}`);
+    await flush();
+
+    expect(exec).toHaveBeenCalledWith(command1, ["x", { e: `my space` }]);
 });

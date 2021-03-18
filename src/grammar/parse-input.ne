@@ -20,7 +20,7 @@ FLAG_START -> _ "-" {% null %}
 
 cmdToken -> [^- ]:+ (" ":+ [^- ]:+):* {% d => [d[0].join('')].concat(...d[1].map(dd => [].concat(...dd))).join('') %}
 
-paramValToken -> [^- ]:+ {% d => d[0].join('') %}
+paramValToken -> [^- "]:+ {% d => d[0].join('') %}
 
 _ -> [ ]:* {% () => null %}
 __ -> [ ] {% () => null %}
