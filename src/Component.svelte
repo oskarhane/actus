@@ -7,6 +7,7 @@
 
     // Local vars
     let results: Command[] = [];
+    let outerElement: HTMLDivElement;
     const dispatch = createEventDispatcher();
 
     // Exports / API
@@ -68,12 +69,26 @@
         dispatch("execute", payload);
     }
     $: if ($selectionService.matches("open")) {
+        setupOutsideClickListener();
         dispatch("open");
     } else {
+        teardownOutsideClickListener();
         dispatch("close");
     }
 
     // Helper functions
+    function clickListener(e: MouseEvent) {
+        const { target } = e;
+        if (target !== outerElement && !outerElement.contains(target as Node)) {
+            selectionService.send("CLOSE");
+        }
+    }
+    function setupOutsideClickListener() {
+        document.body.addEventListener("click", clickListener);
+    }
+    function teardownOutsideClickListener() {
+        document.body.removeEventListener("click", clickListener);
+    }
     function focus(e: HTMLInputElement) {
         e.focus();
     }
@@ -91,6 +106,7 @@
 
 {#if $selectionService.matches("open")}
     <div
+        bind:this={outerElement}
         class="wrapper"
         style={Object.entries(theme)
             .map((e) => e.join(":"))
