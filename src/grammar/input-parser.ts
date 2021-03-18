@@ -34,6 +34,31 @@ interface Grammar {
 const grammar: Grammar = {
   Lexer: undefined,
   ParserRules: [
+    {"name": "dqstring$ebnf$1", "symbols": []},
+    {"name": "dqstring$ebnf$1", "symbols": ["dqstring$ebnf$1", "dstrchar"], "postprocess": (d) => d[0].concat([d[1]])},
+    {"name": "dqstring", "symbols": [{"literal":"\""}, "dqstring$ebnf$1", {"literal":"\""}], "postprocess": function(d) {return d[1].join(""); }},
+    {"name": "sqstring$ebnf$1", "symbols": []},
+    {"name": "sqstring$ebnf$1", "symbols": ["sqstring$ebnf$1", "sstrchar"], "postprocess": (d) => d[0].concat([d[1]])},
+    {"name": "sqstring", "symbols": [{"literal":"'"}, "sqstring$ebnf$1", {"literal":"'"}], "postprocess": function(d) {return d[1].join(""); }},
+    {"name": "btstring$ebnf$1", "symbols": []},
+    {"name": "btstring$ebnf$1", "symbols": ["btstring$ebnf$1", /[^`]/], "postprocess": (d) => d[0].concat([d[1]])},
+    {"name": "btstring", "symbols": [{"literal":"`"}, "btstring$ebnf$1", {"literal":"`"}], "postprocess": function(d) {return d[1].join(""); }},
+    {"name": "dstrchar", "symbols": [/[^\\"\n]/], "postprocess": id},
+    {"name": "dstrchar", "symbols": [{"literal":"\\"}, "strescape"], "postprocess": 
+        function(d) {
+            return JSON.parse("\""+d.join("")+"\"");
+        }
+        },
+    {"name": "sstrchar", "symbols": [/[^\\'\n]/], "postprocess": id},
+    {"name": "sstrchar", "symbols": [{"literal":"\\"}, "strescape"], "postprocess": function(d) { return JSON.parse("\""+d.join("")+"\""); }},
+    {"name": "sstrchar$string$1", "symbols": [{"literal":"\\"}, {"literal":"'"}], "postprocess": (d) => d.join('')},
+    {"name": "sstrchar", "symbols": ["sstrchar$string$1"], "postprocess": function(d) {return "'"; }},
+    {"name": "strescape", "symbols": [/["\\/bfnrt]/], "postprocess": id},
+    {"name": "strescape", "symbols": [{"literal":"u"}, /[a-fA-F0-9]/, /[a-fA-F0-9]/, /[a-fA-F0-9]/, /[a-fA-F0-9]/], "postprocess": 
+        function(d) {
+            return d.join("");
+        }
+        },
     {"name": "main", "symbols": ["cmd", "params", "_"], "postprocess": d => [d[0], d[1]]},
     {"name": "main", "symbols": ["cmd", "_"], "postprocess": d => [d[0]]},
     {"name": "cmd", "symbols": ["cmdToken"], "postprocess": d => d.join('').trim()},
@@ -46,6 +71,7 @@ const grammar: Grammar = {
     {"name": "paramName$ebnf$1", "symbols": ["paramName$ebnf$1", /[^- ]/], "postprocess": (d) => d[0].concat([d[1]])},
     {"name": "paramName", "symbols": ["__", "FLAG_START", "paramName$ebnf$1"], "postprocess": d => d[2].join('').trim() || null},
     {"name": "paramVal", "symbols": ["paramValToken"], "postprocess": id},
+    {"name": "paramVal", "symbols": ["dqstring"], "postprocess": id},
     {"name": "FLAG_START", "symbols": ["_", {"literal":"-"}], "postprocess": null},
     {"name": "cmdToken$ebnf$1", "symbols": [/[^- ]/]},
     {"name": "cmdToken$ebnf$1", "symbols": ["cmdToken$ebnf$1", /[^- ]/], "postprocess": (d) => d[0].concat([d[1]])},

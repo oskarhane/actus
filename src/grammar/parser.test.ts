@@ -57,3 +57,11 @@ test("should parse commands with empty params correctly", () => {
     parserResult = parser.results[0] as ParserResult;
     expect(parserResult).toEqual(["tt", {}]);
 });
+
+test("should parse double qouted params correctly", () => {
+    let input = `tt -e "string with spaces" -p 8080`;
+    let parser = newParser();
+    parser.feed(input);
+    let parserResult: ParserResult = parser.results[0] as ParserResult;
+    expect(parserResult).toEqual(["tt", { e: "string with spaces", p: "8080" }]);
+});

@@ -1,4 +1,6 @@
 @preprocessor typescript
+@builtin "string.ne"
+
 main -> cmd params _ {% d => [d[0], d[1]]%}
 	  | cmd _ {% d => [d[0]] %}
 
@@ -11,7 +13,8 @@ param -> paramName {% d => d[0] !== null ? {[d[0]]: null} : {} %}
 
 paramName -> __ FLAG_START [^- ]:* {% d => d[2].join('').trim() || null %}
 
-paramVal -> paramValToken {% id %}
+paramVal -> paramValToken {% id %} 
+          | dqstring {% id %}
 
 FLAG_START -> _ "-" {% null %}
 
