@@ -4,11 +4,16 @@
     import { ranks } from "./rank";
     import { selectionMachine } from "./selection-machine";
     import type {
+        CloseEvent,
         Command,
         CommandDescription,
         ExecDetail,
         ExecDoneEvent,
+        ExecEvent,
+        InputEvent,
         ParserResult,
+        SelectEvent,
+        SetCommandsEvent,
         SortFunction,
         Theme,
     } from "./types";
@@ -47,7 +52,7 @@
     // eslint-disable-next-line
     export const toggle = () => {
         if ($selectionService.matches("open")) {
-            selectionService.send("CLOSE");
+            selectionService.send({ type: "CLOSE" } as CloseEvent);
             return;
         }
         selectionService.send("OPEN");
@@ -70,10 +75,10 @@
 
     // Machine interactions
     $: if (commands.length) {
-        selectionService.send("NEW_COMMANDS", { commands });
+        selectionService.send({ type: "NEW_COMMANDS", commands } as SetCommandsEvent);
     }
     function changed(e: Event & { currentTarget: EventTarget & HTMLInputElement }) {
-        selectionService.send("INPUT", { input: e.currentTarget.value });
+        selectionService.send({ type: "INPUT", input: e.currentTarget.value } as InputEvent);
     }
 
     // HTML Events for outer component to listen on
@@ -93,7 +98,7 @@
     function clickListener(e: MouseEvent) {
         const { target } = e;
         if (target !== outerElement && !outerElement.contains(target as Node)) {
-            selectionService.send("CLOSE");
+            selectionService.send({ type: "CLOSE" } as CloseEvent);
         }
     }
     function setupOutsideClickListener() {
@@ -114,6 +119,12 @@
     function reslutIdToCommand(commands: Command[], resultId: string): Command {
         const cmd = commands.filter((c) => c.id === resultId);
         return cmd[0];
+    }
+    function selectEvent(id: string): SelectEvent {
+        return { type: "SELECT", id };
+    }
+    function execEvent(id: string): ExecEvent {
+        return { type: "EXEC", id };
     }
 </script>
 
@@ -140,8 +151,8 @@
                     <div
                         data-testid={`test-id-${resultIndex}`}
                         class:active={$selectionService.context.selectedId === result.id}
-                        on:mousedown={() => selectionService.send("EXEC", { id: result.id })}
-                        on:mouseover={() => selectionService.send("SELECT", { id: result.id })}
+                        on:mousedown={() => selectionService.send(execEvent(result.id))}
+                        on:mouseover={() => selectionService.send(selectEvent(result.id))}
                         class="result"
                     >
                         {result.title}

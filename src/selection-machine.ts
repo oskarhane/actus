@@ -1,16 +1,19 @@
-import { createMachine, assign } from "xstate";
+import { createMachine, assign, Sender } from "xstate";
 import { parseInput } from "./rank";
-import type { Command, ExecDoneEvent, SortFunction } from "./types";
-type Context = {
-    resultIds: string[];
-    selectedId: string;
-    toggleKey: string;
-    commands: Command[];
-    input: string;
-    sortFn: SortFunction;
-};
+import type {
+    ExecDoneEvent,
+    InputEvent,
+    SelectEvent,
+    SetCommandsEvent,
+    StepEvent,
+    ExecEvent,
+    OpenEvent,
+    CloseEvent,
+    MachineEvents,
+    MachineContextState,
+} from "./types";
 
-export const selectionMachine = createMachine<Context>(
+export const selectionMachine = createMachine<MachineContextState, MachineEvents>(
     {
         id: "result-selection",
         initial: "closed",
@@ -97,7 +100,7 @@ export const selectionMachine = createMachine<Context>(
     },
     {
         services: {
-            setupOpenListener: (context) => (callback) => {
+            setupOpenListener: (context) => (callback: Sender<OpenEvent>) => {
                 const toggleFn = (e: KeyboardEvent) => {
                     const { key } = e;
                     // @ts-ignore
@@ -112,7 +115,7 @@ export const selectionMachine = createMachine<Context>(
                 document.addEventListener("keyup", toggleFn);
                 return () => document.removeEventListener("keyup", toggleFn);
             },
-            setupInteractionListener: () => (callback) => {
+            setupInteractionListener: () => (callback: Sender<ExecEvent | CloseEvent | StepEvent>) => {
                 const listenerFn = (e: KeyboardEvent) => {
                     const { key } = e;
                     if (key === "Escape") {
@@ -137,7 +140,7 @@ export const selectionMachine = createMachine<Context>(
                 document.addEventListener("keydown", listenerFn);
                 return () => document.removeEventListener("keydown", listenerFn);
             },
-            exec: (context, event) => (callback) => {
+            exec: (context, event: ExecEvent) => (callback: Sender<ExecDoneEvent>) => {
                 const id: string = event.id || context.selectedId;
                 const parsedInput = parseInput(context.input);
                 const executedCommand = context.commands.filter((c) => c.id === id);
@@ -149,9 +152,9 @@ export const selectionMachine = createMachine<Context>(
             },
         },
         actions: {
-            saveInputAndResults: assign({
-                input: (_, event) => event.input,
-                resultIds: (context, event) => {
+            saveInputAndResults: assign<MachineContextState, MachineEvents>({
+                input: (_, event: InputEvent) => event.input,
+                resultIds: (context, event: InputEvent) => {
                     if (event.input.length) {
                         const results = context.sortFn(context.commands, event.input);
                         if (results !== null) {
@@ -162,16 +165,16 @@ export const selectionMachine = createMachine<Context>(
                     return [];
                 },
             }),
-            clearInputAndResults: assign({ input: () => "", resultIds: () => [] }),
-            select: assign({ selectedId: (_, event) => event.id }),
-            selectFirst: assign({
+            clearInputAndResults: assign<MachineContextState>({ input: () => "", resultIds: () => [] }),
+            select: assign<MachineContextState, MachineEvents>({ selectedId: (_, event: SelectEvent) => event.id }),
+            selectFirst: assign<MachineContextState>({
                 selectedId: (context) => context.resultIds[0] || "",
             }),
-            setCommandsAndResults: assign({
-                commands: (_, event) => {
+            setCommandsAndResults: assign<MachineContextState, MachineEvents>({
+                commands: (_, event: SetCommandsEvent) => {
                     return event.commands;
                 },
-                resultIds: (context, event) => {
+                resultIds: (context, event: SetCommandsEvent) => {
                     if (context.input.length) {
                         const results = context.sortFn(event.commands, context.input);
                         if (results !== null) {
@@ -182,8 +185,8 @@ export const selectionMachine = createMachine<Context>(
                     return [];
                 },
             }),
-            step: assign({
-                selectedId: (context, event) => {
+            step: assign<MachineContextState, MachineEvents>({
+                selectedId: (context, event: StepEvent) => {
                     if (!context.resultIds.length) {
                         return "";
                     }
