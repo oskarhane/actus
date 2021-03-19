@@ -3,7 +3,15 @@
     import { interpret } from "xstate";
     import { ranks } from "./rank";
     import { selectionMachine } from "./selection-machine";
-    import type { Command, CommandDescription, ExecDetail, ParserResult, SortFunction, Theme } from "./types";
+    import type {
+        Command,
+        CommandDescription,
+        ExecDetail,
+        ExecDoneEvent,
+        ParserResult,
+        SortFunction,
+        Theme,
+    } from "./types";
 
     // Local vars
     let results: Command[] = [];
@@ -45,6 +53,21 @@
         selectionService.send("OPEN");
     };
 
+    // Machine listeners
+    const machineEventListeners = {
+        EXEC_DONE: (event: ExecDoneEvent) => resultExec(event.id, event.input),
+    };
+    function handleMachineEvents(event: { type: string }) {
+        if (machineEventListeners[event.type]) {
+            machineEventListeners[event.type](event);
+        }
+    }
+    selectionService.onEvent(handleMachineEvents);
+
+    $: results = $selectionService.context.resultIds.map((id) =>
+        reslutIdToCommand($selectionService.context.commands, id)
+    );
+
     // Machine interactions
     $: if (commands.length) {
         selectionService.send("NEW_COMMANDS", { commands });
@@ -52,16 +75,6 @@
     function changed(e: Event & { currentTarget: EventTarget & HTMLInputElement }) {
         selectionService.send("INPUT", { input: e.currentTarget.value });
     }
-
-    // Machine listeners
-    $: results = $selectionService.context.resultIds.map((id) =>
-        reslutIdToCommand($selectionService.context.commands, id)
-    );
-    selectionService.onEvent((event: { type: string; id?: string; input?: ParserResult }) => {
-        if (event.type === "EXEC_DONE") {
-            resultExec(event.id, event.input);
-        }
-    });
 
     // HTML Events for outer component to listen on
     function resultExec(id: string, input: ParserResult) {

@@ -21,6 +21,11 @@ export type ExecDetail = {
     id: string;
     input: ParserResult;
 };
+export type ExecDoneEvent = {
+    type: string;
+    id: string;
+    input: ParserResult;
+};
 
 export type Theme = {
     "--background-color"?: string;
