@@ -19,7 +19,6 @@ export function parseInput(input: string): ParserResult | null {
     } catch (e) {
         return null;
     }
-    return [input.trim()];
 }
 
 export function ranks(commands: Command[], input: string): Command[] | null {

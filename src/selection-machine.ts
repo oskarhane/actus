@@ -209,7 +209,7 @@ export const selectionMachine = createMachine<MachineContextState, MachineEvents
         guards: {
             selectedExists: (context) => context.resultIds.includes(context.selectedId),
             isExecutable: (context) =>
-                context.input.length > 0 && context.resultIds.length > 0 && context.sortFn([], context.input) !== null,
+                context.input.length > 0 && context.resultIds.length > 0 && parseInput(context.input) !== null,
         },
     }
 );
