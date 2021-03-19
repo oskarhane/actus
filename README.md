@@ -107,6 +107,4 @@ Here's a visaulization of the machine:
 
 [ ] Make it self learning using a in memory tree that can be loaded and downloaded
 
-[ ] Stepping doesn't scroll the items into view
-
 [ ] Commands should be able to require params

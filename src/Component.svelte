@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { createEventDispatcher } from "svelte";
+    import { createEventDispatcher, tick } from "svelte";
     import { interpret } from "xstate";
     import { ranks } from "./rank";
     import { selectionMachine } from "./selection-machine";
@@ -15,6 +15,7 @@
         SelectEvent,
         SetCommandsEvent,
         SortFunction,
+        StepEvent,
         Theme,
     } from "./types";
 
@@ -61,6 +62,19 @@
     // Machine listeners
     const machineEventListeners = {
         EXEC_DONE: (event: ExecDoneEvent) => resultExec(event.id, event.input),
+        STEP: async (event: StepEvent) => {
+            await tick();
+            const activeEls = document.getElementsByClassName("active");
+            if (!activeEls || !activeEls.length) {
+                return;
+            }
+            const elem = activeEls[0] as HTMLDivElement;
+            // @ts-ignore
+            if (elem && elem.scrollIntoViewIfNeeded) {
+                // @ts-ignore
+                elem.scrollIntoViewIfNeeded();
+            }
+        },
     };
     function handleMachineEvents(event: { type: string }) {
         if (machineEventListeners[event.type]) {
