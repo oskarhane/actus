@@ -245,11 +245,9 @@
     [type="text"] {
         font-size: 1rem;
         padding: 0.5rem;
-        border-top-left-radius: 4px;
-        border-top-right-radius: 4px;
         border: 0;
         width: calc(400px - 1rem);
-        margin: 0;
+        margin: 4px 0;
         color: var(--color, #000);
         background-color: var(--background-color, rgba(255, 255, 255, 1));
     }
