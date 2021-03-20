@@ -2,13 +2,17 @@ import type { EventObject } from "xstate";
 
 export type Command = {
     id: string;
-    title: string;
+    title: CommandTitle;
     description: CommandDescription;
-    exec: ExecutionFunction;
+    exec: ExecutionFn;
+    getMatchString?: GenerateMatchStringFn;
 };
-export type ExecutionFunction = (command: Command, input: ParserResult) => void;
+export type ExecutionFn = (command: Command, input: ParserResult) => void;
 export type CommandDescription = string | CommandDescriptionFn;
-export type CommandDescriptionFn = () => string;
+export type CommandDescriptionFn = (input: string) => string;
+export type CommandTitle = string | CommandTitleFn;
+export type CommandTitleFn = (input: string) => string;
+export type GenerateMatchStringFn = (input: string) => string;
 export interface RankCommand extends Command {
     rank: number;
 }
