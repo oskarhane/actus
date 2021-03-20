@@ -7,6 +7,7 @@
         CloseEvent,
         Command,
         CommandDescription,
+        CommandTitle,
         ExecDetail,
         ExecDoneEvent,
         ExecEvent,
@@ -128,7 +129,13 @@
         if (typeof descr === "string") {
             return descr;
         }
-        return descr();
+        return descr($selectionService.context.parsedInput);
+    }
+    function renderTitle(title: CommandTitle) {
+        if (typeof title === "string") {
+            return title;
+        }
+        return title($selectionService.context.parsedInput);
     }
     function reslutIdToCommand(commands: Command[], resultId: string): Command {
         const cmd = commands.filter((c) => c.id === resultId);
@@ -169,7 +176,7 @@
                         on:mouseover={() => selectionService.send(selectEvent(result.id))}
                         class="result"
                     >
-                        {result.title}
+                        {renderTitle(result.title)}
                         <span class="result-description">{renderDescription(result.description)}</span>
                     </div>
                 {/each}

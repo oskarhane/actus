@@ -48,14 +48,18 @@ Type definition of a command:
 ```typescript
 type Command = {
     id: string;
-    title: string;
+    title: CommandTitle;
     description: CommandDescription;
-    exec: ExecutionFunction;
+    exec: ExecutionFn;
+    getMatchString?: GenerateMatchStringFn;
 };
+type CommandTitle = string | CommandTitleFn;
+type CommandTitleFn = (input: ParserResult) => string;
 type CommandDescription = string | CommandDescriptionFn;
-type CommandDescriptionFn = () => string;
-type ExecutionFunction = (command: Command, input: ParserResult) => void;
-type ParserResult = [string] | [string, ParserParams];
+type CommandDescriptionFn = (input: ParserResult) => string;
+type ExecutionFn = (command: Command, input: ParserResult) => void;
+type GenerateMatchStringFn = (input: ParserResult) => string;
+type ParserResult = [string] | [string, ParserParams] | null;
 type ParserParams = {
     [key: string]: string;
 };

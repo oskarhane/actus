@@ -2,13 +2,17 @@ import type { EventObject } from "xstate";
 
 export type Command = {
     id: string;
-    title: string;
+    title: CommandTitle;
     description: CommandDescription;
-    exec: ExecutionFunction;
+    exec: ExecutionFn;
+    getMatchString?: GenerateMatchStringFn;
 };
-export type ExecutionFunction = (command: Command, input: ParserResult) => void;
+export type ExecutionFn = (command: Command, input: ParserResult) => void;
 export type CommandDescription = string | CommandDescriptionFn;
-export type CommandDescriptionFn = () => string;
+export type CommandDescriptionFn = (input: ParserResult) => string;
+export type CommandTitle = string | CommandTitleFn;
+export type CommandTitleFn = (input: ParserResult) => string;
+export type GenerateMatchStringFn = (input: ParserResult) => string;
 export interface RankCommand extends Command {
     rank: number;
 }
@@ -36,7 +40,7 @@ export type Theme = {
 
 export type SortFunction = (commands: Command[], input: string) => Command[] | null;
 
-export type ParserResult = [string] | [string, ParserParams];
+export type ParserResult = [string] | [string, ParserParams] | null;
 type ParserParams = {
     [key: string]: string;
 };
@@ -47,6 +51,7 @@ export type MachineContextState = {
     toggleKey: string;
     commands: Command[];
     input: string;
+    parsedInput: ParserResult;
     sortFn: SortFunction;
 };
 export interface ExecDoneEvent extends EventObject {

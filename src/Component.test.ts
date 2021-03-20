@@ -1,7 +1,8 @@
 import { render } from "@testing-library/svelte";
 import userEvent from "@testing-library/user-event";
 import Component from "./Component.svelte";
-import type { Command } from "./types";
+import { parseInput } from "./rank";
+import type { Command, GenerateMatchStringFn, ParserResult } from "./types";
 
 const flush = () => new Promise((resolve) => setTimeout(resolve));
 
@@ -174,4 +175,31 @@ test("should keep open on inside clicks and close on outer", async () => {
 
     expect(exec).toHaveBeenCalledTimes(1);
     expect(() => getByPlaceholderText(/type for/i)).toThrow();
+});
+test("should support dynamic matching commands", async () => {
+    const exec = jest.fn();
+    const getMatchString = jest.fn((input: ParserResult | null) => input[0]);
+    const title = (input: ParserResult) => `Title for ${input[0]}`;
+    const description = (input: ParserResult) => `Description for ${input[0]}`;
+    const input = "665544";
+    const parsedInput = parseInput(input);
+    // @ts-ignore
+    const command1: Command = { id: "1", title, description, exec, getMatchString };
+    const commands: Command[] = [command1];
+    const { getByText } = render(Component, {
+        props: { commands, placeholder: "Type for the test", toggleKey: "o" },
+    });
+    userEvent.keyboard("o");
+    await flush();
+
+    userEvent.keyboard(input);
+    await flush();
+
+    expect(() => getByText(title(parsedInput))).not.toThrow();
+    expect(() => getByText(description(parsedInput))).not.toThrow();
+
+    userEvent.keyboard("{enter}");
+    await flush();
+
+    expect(exec).toHaveBeenCalledWith(command1, ["665544"]);
 });
