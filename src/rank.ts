@@ -7,7 +7,7 @@ const FIRST_IN_WORDS = 7;
 const STARTS = 5;
 const HAS = 4;
 
-export function parseInput(input: string): ParserResult | null {
+export function parseInput(input: string): ParserResult {
     try {
         const parser = new nearley.Parser(nearley.Grammar.fromCompiled(grammar));
         parser.feed(input);
@@ -26,12 +26,15 @@ export function ranks(commands: Command[], input: string): Command[] | null {
     if (parsedInput === null) {
         return null;
     }
-    const inputCmd = parsedInput[0].toLowerCase();
     const r: Command[] = commands
         .map(
             (c: Command): RankCommand => {
                 const rank =
-                    full(c, inputCmd) || firstInWords(c, inputCmd) || starts(c, inputCmd) || has(c, inputCmd) || 0;
+                    full(c, parsedInput) ||
+                    firstInWords(c, parsedInput) ||
+                    starts(c, parsedInput) ||
+                    has(c, parsedInput) ||
+                    0;
                 return { ...c, rank };
             }
         )
@@ -41,15 +44,21 @@ export function ranks(commands: Command[], input: string): Command[] | null {
     return r;
 }
 
-const full = ({ title }, input) => (title.toLowerCase() === input ? FULL : 0);
-const firstInWords = ({ title }, input) =>
-    title
+const full = (command: Command, input: ParserResult) =>
+    getStringToMatch(command, input).toLowerCase() === input[0] ? FULL : 0;
+const firstInWords = (command: Command, input: ParserResult) =>
+    getStringToMatch(command, input)
         .split(" ")
-        .map((w) => w.substring(0, 1))
+        .map((w: string) => w.substring(0, 1))
         .join("")
         .toLowerCase()
-        .indexOf(input) === 0
+        .indexOf(input[0]) === 0
         ? FIRST_IN_WORDS
         : 0;
-const starts = ({ title }, input) => (title.toLowerCase().indexOf(input) === 0 ? STARTS : 0);
-const has = ({ title }, input) => (title.toLowerCase().includes(input) ? HAS : 0);
+const starts = (command: Command, input: ParserResult) =>
+    getStringToMatch(command, input).toLowerCase().indexOf(input[0]) === 0 ? STARTS : 0;
+const has = (command: Command, input: ParserResult) =>
+    getStringToMatch(command, input).toLowerCase().includes(input[0]) ? HAS : 0;
+
+const getStringToMatch = (c: Command, input: ParserResult): string =>
+    c.getMatchString ? c.getMatchString(input) : typeof c.title === "function" ? c.title(input) : c.title;

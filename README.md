@@ -54,12 +54,12 @@ type Command = {
     getMatchString?: GenerateMatchStringFn;
 };
 type CommandTitle = string | CommandTitleFn;
-type CommandTitleFn = (input: string) => string;
+type CommandTitleFn = (input: ParserResult) => string;
 type CommandDescription = string | CommandDescriptionFn;
-type CommandDescriptionFn = () => string;
+type CommandDescriptionFn = (input: ParserResult) => string;
 type ExecutionFn = (command: Command, input: ParserResult) => void;
 type GenerateMatchStringFn = (input: ParserResult) => string;
-type ParserResult = [string] | [string, ParserParams];
+type ParserResult = [string] | [string, ParserParams] | null;
 type ParserParams = {
     [key: string]: string;
 };

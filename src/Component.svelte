@@ -129,13 +129,13 @@
         if (typeof descr === "string") {
             return descr;
         }
-        return descr($selectionService.context.input);
+        return descr($selectionService.context.parsedInput);
     }
     function renderTitle(title: CommandTitle) {
         if (typeof title === "string") {
             return title;
         }
-        return title($selectionService.context.input);
+        return title($selectionService.context.parsedInput);
     }
     function reslutIdToCommand(commands: Command[], resultId: string): Command {
         const cmd = commands.filter((c) => c.id === resultId);

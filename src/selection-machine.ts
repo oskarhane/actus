@@ -19,6 +19,7 @@ export const selectionMachine = createMachine<MachineContextState, MachineEvents
         initial: "closed",
         context: {
             input: "",
+            parsedInput: null,
             commands: [],
             resultIds: [],
             selectedId: "",
@@ -154,6 +155,7 @@ export const selectionMachine = createMachine<MachineContextState, MachineEvents
         actions: {
             saveInputAndResults: assign<MachineContextState, MachineEvents>({
                 input: (_, event: InputEvent) => event.input,
+                parsedInput: (_, event: InputEvent) => parseInput(event.input),
                 resultIds: (context, event: InputEvent) => {
                     if (event.input.length) {
                         const results = context.sortFn(context.commands, event.input);
