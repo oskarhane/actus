@@ -52,6 +52,7 @@ type Command = {
     description: CommandDescription;
     exec: ExecutionFn;
     getMatchString?: GenerateMatchStringFn;
+    requiredArgs?: string[];
 };
 type CommandTitle = string | CommandTitleFn;
 type CommandTitleFn = (input: ParserResult) => string;
