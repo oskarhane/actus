@@ -208,8 +208,37 @@ export const selectionMachine = createMachine<MachineContextState, MachineEvents
         },
         guards: {
             selectedExists: (context) => context.resultIds.includes(context.selectedId),
-            isExecutable: (context) =>
-                context.input.length > 0 && context.resultIds.length > 0 && parseInput(context.input) !== null,
+            isExecutable: (context) => {
+                // No input or no results
+                if (context.input.length < 1 || context.resultIds.length < 1) {
+                    return false;
+                }
+                // Couldn't parse input or only spaces
+                if (context.parsedInput === null || context.parsedInput[0].length < 1) {
+                    return false;
+                }
+                const commandMatch = context.commands.filter((c) => c.id === context.selectedId);
+                // Executed command not found
+                if (!commandMatch.length) {
+                    return false;
+                }
+                const command = commandMatch[0];
+                if (command.requiredArgs) {
+                    // No args specified
+                    if (context.parsedInput.length < 1) {
+                        return false;
+                    }
+                    const inputArgs = context.parsedInput[1] || {};
+                    const nonMetRequiredArgs = command.requiredArgs
+                        .map((arg) => inputArgs[arg])
+                        // Deliberate == in the filter to mathc null and undefined
+                        .filter((argVal) => argVal == null);
+                    if (nonMetRequiredArgs.length) {
+                        return false;
+                    }
+                }
+                return true;
+            },
         },
     }
 );

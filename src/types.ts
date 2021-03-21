@@ -6,6 +6,7 @@ export type Command = {
     description: CommandDescription;
     exec: ExecutionFn;
     getMatchString?: GenerateMatchStringFn;
+    requiredArgs?: string[];
 };
 export type ExecutionFn = (command: Command, input: ParserResult) => void;
 export type CommandDescription = string | CommandDescriptionFn;
