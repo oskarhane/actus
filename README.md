@@ -111,5 +111,3 @@ Here's a visaulization of the machine:
 ## Todo
 
 [ ] Make it self learning using a in memory tree that can be loaded and downloaded
-
-[ ] Commands should be able to require params
