@@ -203,3 +203,25 @@ test("should support dynamic matching commands", async () => {
 
     expect(exec).toHaveBeenCalledWith(command1, ["665544"]);
 });
+test("should update list when new commands arrive", async () => {
+    const exec = () => {};
+    const c1 = { id: "1", title: "title 1", description: "description 1", exec };
+    const c2 = { id: "2", title: "title 2", description: "description 2", exec };
+    const commands: Command[] = [c1];
+    const { getByText, component } = render(Component, {
+        props: { commands, placeholder: "Type for the test", toggleKey: "o" },
+    });
+    userEvent.keyboard("o");
+    await flush();
+
+    userEvent.keyboard("t");
+    await flush();
+
+    expect(() => getByText(/title 1/i)).not.toThrow();
+
+    component.$set({ commands: [c1, c2] });
+    await flush();
+
+    expect(() => getByText(/title 1/i)).not.toThrow();
+    expect(() => getByText(/title 2/i)).not.toThrow();
+});

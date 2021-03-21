@@ -48,7 +48,14 @@
             toggleKey,
             sortFn,
         })
-    ).start();
+    )
+        .onTransition((state, event) => {
+            // If we transition as a result of these events being sent, we might have new results to show
+            if (["NEW_COMMANDS", "INPUT"].includes(event.type)) {
+                results = state.context.resultIds.map((id) => reslutIdToCommand(state.context.commands, id));
+            }
+        })
+        .start();
 
     // Expose toggle funtion so the outside can toggle visibility
     // eslint-disable-next-line
@@ -83,10 +90,6 @@
         }
     }
     selectionService.onEvent(handleMachineEvents);
-
-    $: results = $selectionService.context.resultIds.map((id) =>
-        reslutIdToCommand($selectionService.context.commands, id)
-    );
 
     // Machine interactions
     $: if (commands.length) {

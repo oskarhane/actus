@@ -173,9 +173,7 @@ export const selectionMachine = createMachine<MachineContextState, MachineEvents
                 selectedId: (context) => context.resultIds[0] || "",
             }),
             setCommandsAndResults: assign<MachineContextState, MachineEvents>({
-                commands: (_, event: SetCommandsEvent) => {
-                    return event.commands;
-                },
+                commands: (_, event: SetCommandsEvent) => event.commands,
                 resultIds: (context, event: SetCommandsEvent) => {
                     if (context.input.length) {
                         const results = context.sortFn(event.commands, context.input);
