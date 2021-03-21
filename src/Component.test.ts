@@ -225,3 +225,44 @@ test("should update list when new commands arrive", async () => {
     expect(() => getByText(/title 1/i)).not.toThrow();
     expect(() => getByText(/title 2/i)).not.toThrow();
 });
+
+test("commands should be able to require arguments to be specified", async () => {
+    const exec = jest.fn();
+    const c1 = { id: "1", title: "title 1", description: "description 1", exec, requiredArgs: ["c"] };
+    const commands: Command[] = [c1];
+    const { getByText, getByPlaceholderText } = render(Component, {
+        props: { commands, placeholder: "Type for the test", toggleKey: "o" },
+    });
+    userEvent.keyboard("o");
+    await flush();
+
+    userEvent.keyboard("t");
+    await flush();
+
+    expect(() => getByText(/title 1/i)).not.toThrow();
+
+    // Try tp exec without arg
+    userEvent.keyboard("{enter}");
+    await flush();
+
+    // Should still be open
+    expect(exec).toHaveBeenCalledTimes(0);
+    expect(() => getByPlaceholderText(/type for the/i)).not.toThrow();
+
+    // Enter required arg, but empty -> not ok
+    userEvent.keyboard(" -c{enter}");
+    await flush();
+
+    // Should still be open
+    expect(exec).toHaveBeenCalledTimes(0);
+    expect(() => getByPlaceholderText(/type for the/i)).not.toThrow();
+
+    // Enter required arg value
+    userEvent.keyboard(" 1 {enter}");
+    await flush();
+
+    // Should be closed now
+    expect(() => getByPlaceholderText(/type for the/i)).toThrow();
+    expect(exec).toHaveBeenCalledTimes(1);
+    expect(exec).toHaveBeenCalledWith(c1, ["t", { c: "1" }]);
+});
