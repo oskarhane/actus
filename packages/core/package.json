@@ -3,6 +3,10 @@
     "version": "1.0.0",
     "description": "",
     "main": "dist/index.js",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/oskarhane/actus"
+    },
     "scripts": {
         "prebuild": "rm -rf ./dist",
         "build": "tsc",
@@ -11,7 +15,10 @@
         "prepublishOnly": "npm run build",
         "build:grammar": "nearleyc src/grammar/parse-input.ne > src/grammar/input-parser.ts"
     },
-    "author": "Oskar Hane <oh@oskarhane.com>",
+    "author": {
+        "name": "Oskar Hane",
+        "url": "https://twitter.com/oskarhane"
+    },
     "license": "MIT",
     "devDependencies": {
         "@testing-library/jest-dom": "^5.11.9",

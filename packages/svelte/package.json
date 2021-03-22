@@ -8,6 +8,10 @@
         "name": "Oskar Hane",
         "url": "https://twitter.com/oskarhane"
     },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/oskarhane/actus"
+    },
     "license": "MIT",
     "scripts": {
         "prebuild": "rm -rf ./dist",
