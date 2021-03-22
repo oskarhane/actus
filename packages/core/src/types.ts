@@ -29,18 +29,6 @@ export type ExecDetail = {
     input: ParserResult;
 };
 
-export type Theme = {
-    "--background-color"?: string;
-    "--color"?: string;
-    "--result-description-color"?: string;
-    "--active-result-background-color"?: string;
-    "--active-result-title-color"?: string;
-    "--active-result-description-color"?: string;
-    "--scale"?: string;
-};
-
-export type SortFunction = (commands: Command[], input: string) => Command[] | null;
-
 export type ParserResult = [string] | [string, ParserParams] | null;
 type ParserParams = {
     [key: string]: string;
@@ -99,3 +87,5 @@ export type MachineEvents =
     | StepEvent
     | SetCommandsEvent
     | InputEvent;
+
+export type SortFunction = (commands: Command[], input: string) => Command[] | null;

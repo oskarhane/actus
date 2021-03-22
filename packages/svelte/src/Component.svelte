@@ -1,11 +1,10 @@
 <script lang="ts">
     import { createEventDispatcher, tick } from "svelte";
-    import { interpret } from "xstate";
-    import { ranks } from "./rank";
-    import { selectionMachine } from "./selection-machine";
+    import { interpret, filterAndSort, selectionMachine } from "@actus/core";
+    import type { Theme } from "./types";
     import type {
-        CloseEvent,
         Command,
+        CloseEvent,
         CommandDescription,
         CommandTitle,
         ExecDetail,
@@ -17,8 +16,7 @@
         SetCommandsEvent,
         SortFunction,
         StepEvent,
-        Theme,
-    } from "./types";
+    } from "@actus/core/dist/types";
 
     // Local vars
     let results: Command[] = [];
@@ -35,7 +33,7 @@
         "--color": "",
         "--scale": "",
     };
-    export let sortFn: SortFunction = ranks;
+    export let sortFn: SortFunction = filterAndSort;
     export let commands: Command[] = [];
     export let toggleKey: string = "p";
     export let placeholder: string = "Type something";
@@ -70,7 +68,7 @@
     // Machine listeners
     const machineEventListeners = {
         EXEC_DONE: (event: ExecDoneEvent) => resultExec(event.id, event.input),
-        STEP: async (event: StepEvent) => {
+        STEP: async () => {
             await tick();
             const activeEls = document.getElementsByClassName("active");
             if (!activeEls || !activeEls.length) {

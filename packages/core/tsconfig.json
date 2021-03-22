@@ -1,0 +1,12 @@
+{
+    "extends": "@tsconfig/svelte/tsconfig.json",
+    "compilerOptions": {
+        "sourceMap": true,
+        "types": ["jest"],
+        "outDir": "dist",
+        "declaration": true,
+        "module": "CommonJS"
+    },
+    "include": ["src/**/*"],
+    "exclude": ["node_modules/*"]
+}
