@@ -5,6 +5,7 @@ import sveltePreprocess from "svelte-preprocess";
 import typescript from "@rollup/plugin-typescript";
 import execute from "rollup-plugin-execute";
 import pkg from "./package.json";
+import replace from "@rollup/plugin-replace";
 
 const name = pkg.name
     .replace(/^(@\S+\/)?(svelte-)?(\S+)/, "$3")
@@ -33,7 +34,11 @@ export default [
         ],
         plugins: [
             svelte({
-                preprocess: sveltePreprocess(),
+                preprocess: [sveltePreprocess()],
+            }),
+            replace({
+                preventAssignment: true,
+                "process.env.NODE_ENV": process.env.NODE_ENV,
             }),
             commonjs(),
             resolve(),
