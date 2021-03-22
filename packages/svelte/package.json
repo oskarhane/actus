@@ -1,5 +1,5 @@
 {
-    "name": "svelte-commander",
+    "name": "@actus/svelte",
     "svelte": "dist/index.js",
     "module": "dist/index.mjs",
     "main": "dist/index.umd.js",

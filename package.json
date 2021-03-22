@@ -1,5 +1,5 @@
 {
-    "name": "commander",
+    "name": "actus-root",
     "private": true,
     "devDependencies": {
         "lerna": "^3.22.1"
