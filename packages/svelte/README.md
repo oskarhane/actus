@@ -1,17 +1,19 @@
-## svelte-commander
+## @actus/svelte
+
+Svelte component / bindings that uses the `@actus/core` state machine.
 
 ## Component Usage
 
 Install it in your Svelte project with:
 
 ```bash
-npm install svelte-commander
+npm install @actus/svelte
 ```
 
 and import it
 
 ```svelte
-import Commander from 'svelte-commander'
+import Actus from '@actus/svelte'
 ```
 
 As mentioned, it should be trivial to implement this in any UI framework, have a look in [src/Component.svelte](src/Component.svelte) to see how it's made using Svelte.
@@ -19,7 +21,7 @@ As mentioned, it should be trivial to implement this in any UI framework, have a
 All props except `commands` are optional.
 
 ```jsx
-<Commander
+<Actus
     {commands}
     toggleKey="p"
     placeholder="Type your best commands"

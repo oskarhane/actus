@@ -1,4 +1,4 @@
-# commander components
+# @actus
 
 ![bar](images/bar.png)
 This repo holds a command palette with robust interactions and predictable behavior backed by a finite state machine.
@@ -7,29 +7,6 @@ A command palette (or command bar) is a user interface that receives user input 
 You see this kind of UI in many application nowadays. `Ctrl/cmd + k` in Slack and Discord, `Ctrl/cmd + p` in VS Code, `cmd + Space` in MacOS etc.
 
 > I wanted to have as much as possible handled in a UI framework / library agnostic way, so gluing it to a React or Svelte component should be trivial.
-
-Type definition of a command:
-
-```typescript
-type Command = {
-    id: string;
-    title: CommandTitle;
-    description: CommandDescription;
-    exec: ExecutionFn;
-    getMatchString?: GenerateMatchStringFn;
-    requiredArgs?: string[];
-};
-type CommandTitle = string | CommandTitleFn;
-type CommandTitleFn = (input: ParserResult) => string;
-type CommandDescription = string | CommandDescriptionFn;
-type CommandDescriptionFn = (input: ParserResult) => string;
-type ExecutionFn = (command: Command, input: ParserResult) => void;
-type GenerateMatchStringFn = (input: ParserResult) => string;
-type ParserResult = [string] | [string, ParserParams] | null;
-type ParserParams = {
-    [key: string]: string;
-};
-```
 
 ## Demo
 
@@ -68,10 +45,10 @@ If the user types something in the command palette input but closes it without e
 
 ## The Finite State Machine
 
-Have a look at [src/selection-machine.ts](src/selection-machine.ts) to see the machine and its services / actions / guards implementations.
+Have a look at [packages/core/src/selection-machine.ts](packages/core/src/selection-machine.ts) to see the machine and its services / actions / guards implementations.
 
 Here's a visaulization of the machine:
-![vis](images/vis.png)
+![vis](packages/core/images/vis.png)
 
 ## Todo
 
