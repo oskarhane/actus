@@ -58,9 +58,9 @@
         "command"
     ],
     "dependencies": {
-        "@actus/core": "*"
+        "@actus/core": "^2.0.0"
     },
-    "version": "1.4.0",
+    "version": "2.0.0",
     "jest": {
         "modulePathIgnorePatterns": [
             "<rootDir>/dist/"
