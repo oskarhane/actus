@@ -1,5 +1,5 @@
 <script lang="ts">
-    import Commander from "svelte-commander";
+    import Commander from "@actus/svelte";
     export let name: string;
 </script>
 
