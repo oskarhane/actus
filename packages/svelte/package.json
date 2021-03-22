@@ -53,7 +53,9 @@
         "palette",
         "command"
     ],
-    "dependencies": {},
+    "dependencies": {
+        "@actus/core": "*"
+    },
     "version": "1.4.0",
     "jest": {
         "modulePathIgnorePatterns": [

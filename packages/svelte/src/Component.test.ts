@@ -1,8 +1,8 @@
 import { render } from "@testing-library/svelte";
 import userEvent from "@testing-library/user-event";
 import Component from "./Component.svelte";
-import { parseInput } from "./rank";
-import type { Command, GenerateMatchStringFn, ParserResult } from "./types";
+import { parseInput } from "@actus/core";
+import type { Command, ParserResult } from "@actus/core/dist/types";
 
 const flush = () => new Promise((resolve) => setTimeout(resolve));
 
