@@ -7,8 +7,6 @@ import type {
     SetCommandsEvent,
     StepEvent,
     ExecEvent,
-    OpenEvent,
-    CloseEvent,
     MachineEvents,
     MachineContextState,
 } from "./types";
@@ -28,13 +26,11 @@ export const selectionMachine = createMachine<MachineContextState, MachineEvents
         },
         states: {
             closed: {
-                invoke: { src: "setupOpenListener" },
                 on: {
                     OPEN: "open",
                 },
             },
             open: {
-                invoke: { src: "setupInteractionListener" },
                 on: {
                     CLOSE: "closed",
                     EXEC: {
@@ -101,46 +97,6 @@ export const selectionMachine = createMachine<MachineContextState, MachineEvents
     },
     {
         services: {
-            setupOpenListener: (context) => (callback: Sender<OpenEvent>) => {
-                const toggleFn = (e: KeyboardEvent) => {
-                    const { key } = e;
-                    // @ts-ignore
-                    if (e.target.tagName === "INPUT") {
-                        return;
-                    }
-                    if (key === context.toggleKey) {
-                        e.preventDefault();
-                        callback("OPEN");
-                    }
-                };
-                document.addEventListener("keyup", toggleFn);
-                return () => document.removeEventListener("keyup", toggleFn);
-            },
-            setupInteractionListener: () => (callback: Sender<ExecEvent | CloseEvent | StepEvent>) => {
-                const listenerFn = (e: KeyboardEvent) => {
-                    const { key } = e;
-                    if (key === "Escape") {
-                        callback("CLOSE");
-                        return;
-                    }
-                    if (key === "Enter") {
-                        callback("EXEC");
-                        return;
-                    }
-                    if (key === "ArrowDown") {
-                        e.preventDefault();
-                        callback({ type: "STEP", direction: "DOWN" });
-                        return;
-                    }
-                    if (key === "ArrowUp") {
-                        e.preventDefault();
-                        callback({ type: "STEP", direction: "UP" });
-                        return;
-                    }
-                };
-                document.addEventListener("keydown", listenerFn);
-                return () => document.removeEventListener("keydown", listenerFn);
-            },
             exec: (context, event: ExecEvent) => (callback: Sender<ExecDoneEvent>) => {
                 const id: string = event.id || context.selectedId;
                 const parsedInput = parseInput(context.input);

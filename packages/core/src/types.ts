@@ -1,4 +1,5 @@
-import type { EventObject } from "xstate";
+import type { EventObject, State } from "xstate";
+import type { StateListener } from "xstate/lib/interpreter";
 
 export type Command = {
     id: string;
@@ -89,3 +90,11 @@ export type MachineEvents =
     | InputEvent;
 
 export type SortFunction = (commands: Command[], input: string) => Command[] | null;
+
+export type TransistionListener = StateListener<
+    MachineContextState,
+    EventObject,
+    any,
+    { value: any; context: MachineContextState }
+>;
+export type MachineState = State<MachineContextState, MachineEvents>;
