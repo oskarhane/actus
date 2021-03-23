@@ -6,14 +6,23 @@
 <main>
     <h1>Hello {name}!</h1>
     <p>Visit the <a href="https://svelte.dev/tutorial">Svelte tutorial</a> to learn how to build Svelte apps.</p>
-    <div class="commander">
-        <Commander commands={[{ id: "1", title: "yyy", description: "zzz", exec: () => {} }]} />
+    <div class="commanders">
+        <div class="commander">
+            <Commander commands={[{ id: "1", title: "yyy", description: "zzz", exec: () => {} }]} />
+        </div>
+        <div class="commander">
+            <Commander commands={[{ id: "1", title: "xxx", description: "zzz", exec: () => {} }]} toggleKey="o" />
+        </div>
     </div>
 </main>
 
 <style>
+    .commanders {
+        display: flex;
+    }
     .commander {
         text-align: left;
+        width: 50%;
     }
     main {
         text-align: center;
