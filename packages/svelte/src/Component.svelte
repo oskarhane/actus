@@ -1,6 +1,12 @@
 <script lang="ts">
     import { createEventDispatcher, tick } from "svelte";
-    import { interpret, filterAndSort, selectionMachine } from "@actus/core";
+    import {
+        interpret,
+        filterAndSort,
+        selectionMachine,
+        setupInteractionListener,
+        setupOpenListener,
+    } from "@actus/core";
     import type { Theme } from "./types";
     import type {
         Command,
@@ -15,12 +21,15 @@
         SelectEvent,
         SetCommandsEvent,
         SortFunction,
-        StepEvent,
+        MachineEvents,
+        MachineState,
     } from "@actus/core/dist/types";
 
     // Local vars
     let results: Command[] = [];
     let outerElement: HTMLDivElement;
+    let teardownInputListener = () => {};
+    let tearDownOpenListener = () => {};
     const dispatch = createEventDispatcher();
 
     // Exports / API
@@ -38,23 +47,6 @@
     export let toggleKey: string = "p";
     export let placeholder: string = "Type something";
 
-    // Start machine
-    let selectionService = interpret(
-        selectionMachine.withContext({
-            ...selectionMachine.context,
-            commands,
-            toggleKey,
-            sortFn,
-        })
-    )
-        .onTransition((state, event) => {
-            // If we transition as a result of these events being sent, we might have new results to show
-            if (["NEW_COMMANDS", "INPUT"].includes(event.type)) {
-                results = state.context.resultIds.map((id) => reslutIdToCommand(state.context.commands, id));
-            }
-        })
-        .start();
-
     // Expose toggle funtion so the outside can toggle visibility
     // eslint-disable-next-line
     export const toggle = () => {
@@ -66,8 +58,39 @@
     };
 
     // Machine listeners
+    function handleMachineTransitions(state: MachineState, event: MachineEvents) {
+        Object.keys(machineStatesListeners).forEach((stateString) => {
+            if (state.matches(stateString)) {
+                machineStatesListeners[stateString](state, event);
+            }
+        });
+        if (machineEventListeners[event.type]) {
+            machineEventListeners[event.type](state, event);
+        }
+    }
+    const machineStatesListeners = {
+        closed: (state: MachineState) => {
+            teardownOutsideClickListener();
+            teardownInputListener();
+            dispatch("close");
+            results = state.context.resultIds.map((id) => reslutIdToCommand(state.context.commands, id));
+            setupOpeningListener();
+        },
+    };
     const machineEventListeners = {
-        EXEC_DONE: (event: ExecDoneEvent) => resultExec(event.id, event.input),
+        INPUT: (state: MachineState) => {
+            results = state.context.resultIds.map((id) => reslutIdToCommand(state.context.commands, id));
+        },
+        NEW_COMMANDS: (state: MachineState) => {
+            results = state.context.resultIds.map((id) => reslutIdToCommand(state.context.commands, id));
+        },
+        OPEN: () => {
+            setupInputListener();
+            setupOutsideClickListener();
+            tearDownOpenListener();
+            dispatch("open");
+        },
+        EXEC_DONE: (_, event: ExecDoneEvent) => resultExec(event.id, event.input),
         STEP: async () => {
             await tick();
             const activeEls = document.getElementsByClassName("active");
@@ -82,12 +105,18 @@
             }
         },
     };
-    function handleMachineEvents(event: { type: string }) {
-        if (machineEventListeners[event.type]) {
-            machineEventListeners[event.type](event);
-        }
-    }
-    selectionService.onEvent(handleMachineEvents);
+
+    // Start machine
+    const selectionService = interpret(
+        selectionMachine.withContext({
+            ...selectionMachine.context,
+            commands,
+            toggleKey,
+            sortFn,
+        })
+    )
+        .onTransition(handleMachineTransitions)
+        .start();
 
     // Machine interactions
     $: if (commands.length) {
@@ -102,15 +131,22 @@
         const payload: ExecDetail = { id, input };
         dispatch("execute", payload);
     }
-    $: if ($selectionService.matches("open")) {
-        setupOutsideClickListener();
-        dispatch("open");
-    } else {
-        teardownOutsideClickListener();
-        dispatch("close");
-    }
 
     // Helper functions
+    async function setupOpeningListener() {
+        if (selectionService) {
+            setTimeout(setupOpeningListener, 50);
+            return;
+        }
+        tearDownOpenListener = setupOpenListener(selectionService);
+    }
+    function setupInputListener() {
+        if (!outerElement) {
+            setTimeout(setupInputListener, 50);
+            return;
+        }
+        teardownInputListener = setupInteractionListener(outerElement, selectionService);
+    }
     function clickListener(e: MouseEvent) {
         const { target } = e;
         if (target !== outerElement && !outerElement.contains(target as Node)) {
