@@ -1,6 +1,8 @@
 ## @actus/svelte
 
-Svelte component / bindings that uses the `@actus/core` state machine.
+![bar](images/bar.png)
+
+Svelte UI component / bindings that uses the `@actus/core` state machine.
 
 ## Component Usage
 

@@ -1,6 +1,6 @@
 # @actus
 
-![bar](images/bar.png)
+![bar](packages/svelte/images/bar.png)
 This repo holds a command palette with robust interactions and predictable behavior backed by a finite state machine.
 A command palette (or command bar) is a user interface that receives user input and presents the user with a list of matching commands and executes the command the user chooses.
 
