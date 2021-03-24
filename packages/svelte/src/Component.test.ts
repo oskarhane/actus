@@ -4,7 +4,8 @@ import Component from "./Component.svelte";
 import { parseInput } from "@actus/core";
 import type { Command, ParserResult } from "@actus/core/dist/types";
 
-const flush = () => new Promise((resolve) => setTimeout(resolve));
+// @ts-ignore
+const flush = () => new Promise((resolve) => setImmediate(resolve));
 
 test("should show single command and execute", async () => {
     const exec = jest.fn();

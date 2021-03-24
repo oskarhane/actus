@@ -47,6 +47,16 @@
     export let toggleKey: string = "p";
     export let placeholder: string = "Type something";
 
+    // Start machine
+    const selectionService = interpret(
+        selectionMachine.withContext({
+            ...selectionMachine.context,
+            commands,
+            toggleKey,
+            sortFn,
+        })
+    ).start();
+
     // Expose toggle funtion so the outside can toggle visibility
     // eslint-disable-next-line
     export const toggle = () => {
@@ -73,8 +83,8 @@
             teardownOutsideClickListener();
             teardownInputListener();
             dispatch("close");
-            results = state.context.resultIds.map((id) => reslutIdToCommand(state.context.commands, id));
             setupOpeningListener();
+            results = state.context.resultIds.map((id) => reslutIdToCommand(state.context.commands, id));
         },
     };
     const machineEventListeners = {
@@ -105,18 +115,7 @@
             }
         },
     };
-
-    // Start machine
-    const selectionService = interpret(
-        selectionMachine.withContext({
-            ...selectionMachine.context,
-            commands,
-            toggleKey,
-            sortFn,
-        })
-    )
-        .onTransition(handleMachineTransitions)
-        .start();
+    selectionService.onTransition(handleMachineTransitions);
 
     // Machine interactions
     $: if (commands.length) {
@@ -134,14 +133,15 @@
 
     // Helper functions
     async function setupOpeningListener() {
-        if (selectionService) {
+        if (selectionService === null) {
             setTimeout(setupOpeningListener, 50);
             return;
         }
         tearDownOpenListener = setupOpenListener(selectionService);
     }
-    function setupInputListener() {
-        if (!outerElement) {
+    async function setupInputListener() {
+        await tick();
+        if (!outerElement || selectionService === null) {
             setTimeout(setupInputListener, 50);
             return;
         }
@@ -149,7 +149,7 @@
     }
     function clickListener(e: MouseEvent) {
         const { target } = e;
-        if (target !== outerElement && !outerElement.contains(target as Node)) {
+        if (outerElement && target !== outerElement && !outerElement.contains(target as Node)) {
             selectionService.send({ type: "CLOSE" } as CloseEvent);
         }
     }
