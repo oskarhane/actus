@@ -11,7 +11,19 @@
             <Commander commands={[{ id: "1", title: "yyy", description: "zzz", exec: () => {} }]} />
         </div>
         <div class="commander">
-            <Commander commands={[{ id: "1", title: "xxx", description: "zzz", exec: () => {} }]} toggleKey="o" />
+            <Commander
+                commands={[{ id: "1", title: "xxx", description: "zzz", exec: () => {} }]}
+                toggleKey="o"
+                theme={{
+                    "--color": "#000",
+                    "--active-result-title-color": "#000",
+                    "--result-description-color": "#aaa",
+                    "--active-result-description-color": "#fff",
+                    "--background-color": "#fff",
+                    "--active-result-background-color": "rgba(110, 206, 17, 1)",
+                    "--scale": "1.3",
+                }}
+            />
         </div>
     </div>
 </main>

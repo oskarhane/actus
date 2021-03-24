@@ -224,8 +224,8 @@
 
 <style>
     .wrapper {
-        background-color: var(--background-color, rgba(255, 255, 255, 1));
-        color: var(--color, #000);
+        background-color: var(--background-color, rgba(36, 36, 36, 1));
+        color: var(--color, rgba(212, 208, 199, 1));
         display: flex;
         flex-direction: column;
         position: relative;
@@ -241,21 +241,21 @@
     .result {
         cursor: pointer;
         padding: 0.6rem;
-        background-color: var(--background-color, rgba(255, 255, 255, 1));
+        background-color: var(--background-color, rgba(36, 36, 36, 1));
         font-size: 0.9rem;
     }
     .result.active {
-        background-color: var(--active-result-background-color, rgba(110, 206, 17, 1));
-        color: var(--active-result-title-color, #000);
+        background-color: var(--active-result-background-color, rgba(64, 64, 64, 1));
+        color: var(--active-result-title-color, rgba(255, 255, 255, 1));
     }
     .result-description {
         display: block;
         font-size: 0.7rem;
         font-style: italic;
-        color: var(--result-description-color, #aaa);
+        color: var(--result-description-color, rgba(212, 208, 199, 1));
     }
     .result.active .result-description {
-        color: var(--active-result-description-color, #fff);
+        color: var(--active-result-description-color, rgba(255, 255, 255, 1));
     }
     .results {
         width: 400px;
@@ -265,19 +265,19 @@
         border-bottom-left-radius: 4px;
         border-bottom-right-radius: 4px;
         padding-top: 0.1rem;
-        background-color: var(--background-color, rgba(255, 255, 255, 1));
+        background-color: var(--background-color, rgba(36, 36, 36, 1));
         scrollbar-width: thin;
-        scrollbar-color: var(--color) var(--background-color);
+        scrollbar-color: var(--color, rgba(212, 208, 199, 1)) var(--background-color, rgba(36, 36, 36, 1));
     }
     .results::-webkit-scrollbar {
         width: 6px;
     }
     .results::-webkit-scrollbar-thumb {
-        background-color: var(--color);
+        background-color: var(--color, rgba(212, 208, 199, 1));
         border-radius: 6px;
     }
     .results::-webkit-scrollbar-track {
-        background: var(--background-color);
+        background: var(--background-color, rgba(36, 36, 36, 1));
     }
     [type="text"] {
         font-size: 1rem;
@@ -285,8 +285,8 @@
         border: 0;
         width: calc(400px - 1rem);
         margin: 4px 0;
-        color: var(--color, #000);
-        background-color: var(--background-color, rgba(255, 255, 255, 1));
+        color: var(--color, rgba(212, 208, 199, 1));
+        background-color: var(--background-color, rgba(36, 36, 36, 1));
     }
     [type="text"]:focus {
         outline: none;
