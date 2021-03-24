@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { createEventDispatcher, tick } from "svelte";
+    import { createEventDispatcher, onMount, tick } from "svelte";
     import {
         interpret,
         filterAndSort,
@@ -115,7 +115,9 @@
             }
         },
     };
-    selectionService.onTransition(handleMachineTransitions);
+    onMount(() => {
+        selectionService.onTransition(handleMachineTransitions);
+    });
 
     // Machine interactions
     $: if (commands.length) {
@@ -144,6 +146,9 @@
         if (!outerElement || selectionService === null) {
             setTimeout(setupInputListener, 50);
             return;
+        }
+        if (teardownInputListener) {
+            teardownInputListener();
         }
         teardownInputListener = setupInteractionListener(outerElement, selectionService);
     }
