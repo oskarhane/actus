@@ -1,11 +1,13 @@
 import nearley from "nearley";
+import { getHistoricCallsForInput } from "./exec-graph";
 import grammar from "./grammar/input-parser";
 import type { Command, ParserResult, RankCommand } from "./types";
+import { MatchScore } from "./types";
 
 const FULL = 10;
-const FIRST_IN_WORDS = 7;
-const STARTS = 5;
-const HAS = 4;
+const FIRST_IN_WORDS = 2;
+const STARTS = 3;
+const HAS = 2;
 
 export function parseInput(input: string): ParserResult {
     try {
@@ -26,15 +28,24 @@ export function rank(commands: Command[], input: string): Command[] | null {
     if (parsedInput === null) {
         return null;
     }
+    const execGraphCalls = getHistoricCallsForInput(parsedInput);
+
     const r: Command[] = commands
         .map(
             (c: Command): RankCommand => {
-                const rank =
+                let rank =
                     full(c, parsedInput) ||
                     firstInWords(c, parsedInput) ||
                     starts(c, parsedInput) ||
                     has(c, parsedInput) ||
-                    0;
+                    MatchScore.NO;
+                const historyCalls = execGraphCalls.find((ec) => c.id === ec.id);
+                if (historyCalls) {
+                    const historyCallValue = historyCalls.calls * MatchScore.HISTORY;
+                    if (historyCallValue > rank) {
+                        rank = historyCallValue;
+                    }
+                }
                 return { ...c, rank };
             }
         )
@@ -45,7 +56,7 @@ export function rank(commands: Command[], input: string): Command[] | null {
 }
 
 const full = (command: Command, input: ParserResult) =>
-    getStringToMatch(command, input).toLowerCase() === input[0] ? FULL : 0;
+    getStringToMatch(command, input).toLowerCase() === input[0] ? MatchScore.EXACT : MatchScore.NO;
 const firstInWords = (command: Command, input: ParserResult) =>
     getStringToMatch(command, input)
         .split(" ")
@@ -53,12 +64,12 @@ const firstInWords = (command: Command, input: ParserResult) =>
         .join("")
         .toLowerCase()
         .indexOf(input[0]) === 0
-        ? FIRST_IN_WORDS
-        : 0;
+        ? MatchScore.ACRONYM
+        : MatchScore.NO;
 const starts = (command: Command, input: ParserResult) =>
-    getStringToMatch(command, input).toLowerCase().indexOf(input[0]) === 0 ? STARTS : 0;
+    getStringToMatch(command, input).toLowerCase().indexOf(input[0]) === 0 ? MatchScore.STARTS : MatchScore.NO;
 const has = (command: Command, input: ParserResult) =>
-    getStringToMatch(command, input).toLowerCase().includes(input[0]) ? HAS : 0;
+    getStringToMatch(command, input).toLowerCase().includes(input[0]) ? MatchScore.CONTAINS : MatchScore.NO;
 
 const getStringToMatch = (c: Command, input: ParserResult): string =>
     c.getMatchString ? c.getMatchString(input) : typeof c.title === "function" ? c.title(input) : c.title;

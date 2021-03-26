@@ -1,5 +1,5 @@
 import type { ParserResult } from "./types";
-import type { StoreValue, CharacterEntryGraph, CallRecord } from "./exec-graph.types";
+import type { StoreValue, CharacterEntryGraph, CallRecord, EntryGraph } from "./exec-graph.types";
 
 const LS_KEY = "actus-exec-graph";
 
@@ -29,11 +29,23 @@ function load(key: string): StoreValue {
     }
 }
 
+export function getHistoricCallsForInput(parsedInput: ParserResult): CallRecord[] {
+    const currentGraph = load(LS_KEY);
+    const graphEndpoint = traverseToInput(parsedInput, currentGraph);
+    return graphEndpoint.commands || [];
+}
+
 export function persistExec(parsedInput: ParserResult, commandId: string): void {
     const currentGraph = load(LS_KEY);
+    const graphEndpoint = traverseToInput(parsedInput, currentGraph);
+    graphEndpoint["commands"] = setOrUpdateCallRecord(graphEndpoint["commands"], commandId);
+    store(LS_KEY, currentGraph);
+}
+
+function traverseToInput(parsedInput: ParserResult, graph: StoreValue): CharacterEntryGraph {
     let tree: string[] = parsedInput[0].split("").reduce((full, curr) => full.concat("next", curr), []);
 
-    let currentPlace = currentGraph.entrygraph;
+    let currentPlace = graph.entrygraph;
     while (tree.length) {
         const step = tree.shift();
         currentPlace = createPropIfNotExists(currentPlace, step, {});
@@ -41,8 +53,7 @@ export function persistExec(parsedInput: ParserResult, commandId: string): void 
     }
     let graphEndpoint: CharacterEntryGraph = currentPlace as CharacterEntryGraph;
     graphEndpoint = createPropIfNotExists(graphEndpoint, "commands", []);
-    graphEndpoint["commands"] = setOrUpdateCallRecord(graphEndpoint["commands"], commandId);
-    store(LS_KEY, currentGraph);
+    return graphEndpoint;
 }
 
 function setOrUpdateCallRecord(callRecords: CallRecord[], id: string): CallRecord[] {
