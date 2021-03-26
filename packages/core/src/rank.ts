@@ -21,7 +21,7 @@ export function parseInput(input: string): ParserResult {
     }
 }
 
-export function ranks(commands: Command[], input: string): Command[] | null {
+export function rank(commands: Command[], input: string): Command[] | null {
     const parsedInput = parseInput(input);
     if (parsedInput === null) {
         return null;

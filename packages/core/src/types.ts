@@ -42,7 +42,6 @@ export type MachineContextState = {
     commands: Command[];
     input: string;
     parsedInput: ParserResult;
-    sortFn: SortFunction;
 };
 export interface ExecDoneEvent extends EventObject {
     type: "EXEC_DONE";
