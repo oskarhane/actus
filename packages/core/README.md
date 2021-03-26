@@ -86,7 +86,7 @@ Examples:
 ```
 hello                    -> ["hello"]
 hello -p                 -> ["hello", {p: null}]
-hello -p 1               -> ["hello", {p: 1}]
-hello -p 1 -r "hello x"  -> ["hello", {p: 1, r: "hello x"}]
+hello -p 1               -> ["hello", {p: "1"}]
+hello -p 1 -r "hello x"  -> ["hello", {p: "1", r: "hello x"}]
 hello -p "               -> null (broken string)
 ```
