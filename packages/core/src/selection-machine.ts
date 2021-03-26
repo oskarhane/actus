@@ -1,4 +1,5 @@
 import { createMachine, assign, Sender } from "xstate";
+import { persistExec } from "./exec-graph";
 import { parseInput, rank } from "./rank";
 import type {
     ExecDoneEvent,
@@ -103,6 +104,7 @@ export const selectionMachine = createMachine<MachineContextState, MachineEvents
                 if (executedCommand && executedCommand.length) {
                     executedCommand[0].exec(executedCommand[0], parsedInput);
                 }
+                persistExec(parsedInput, executedCommand[0].id);
                 const sendEvent: ExecDoneEvent = { type: "EXEC_DONE", id, input: parsedInput };
                 callback(sendEvent);
             },
