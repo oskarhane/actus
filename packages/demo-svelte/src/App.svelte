@@ -20,8 +20,7 @@
     getIp();
 
     function setClipboard(text) {
-        let data = [new ClipboardItem({ "text/plain": text })];
-        navigator.clipboard.write(data);
+        navigator.clipboard.writeText(text);
     }
 
     let commands = [
