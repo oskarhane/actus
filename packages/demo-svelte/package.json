@@ -1,6 +1,6 @@
 {
     "name": "svelte-app",
-    "version": "2.1.0",
+    "version": "2.2.0",
     "private": true,
     "scripts": {
         "build": "rollup -c",
@@ -26,7 +26,7 @@
         "typescript": "^4.0.0"
     },
     "dependencies": {
-        "@actus/svelte": "^2.1.0",
+        "@actus/svelte": "^2.2.0",
         "sirv-cli": "^1.0.0"
     }
 }
