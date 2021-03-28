@@ -2,7 +2,7 @@
 
 This is the machine and inner core of the Actus command bar.
 
-It consists of a Finite State Machine, an input parser, and a result ranking algorithm.
+It consists of a Finite State Machine, an input parser, and a result ranking algorithm (self learning).
 
 ## Usage
 
@@ -90,3 +90,8 @@ hello -p 1               -> ["hello", {p: "1"}]
 hello -p 1 -r "hello x"  -> ["hello", {p: "1", r: "hello x"}]
 hello -p "               -> null (broken string)
 ```
+
+## Self learning
+
+It's self learning in the sense that it ranks items higher the more you pick them for a certain input. To follow trends and have new commands
+have achance to get to the top fairly quick, it doesn't keep the execution history forever but normalizes it from time to time. See [src/exec-graph.ts](src/exec-graph.ts) for the implementation of this.

@@ -8,6 +8,11 @@ You see this kind of UI in many application nowadays. `Ctrl/cmd + k` in Slack an
 
 > I wanted to have as much as possible handled in a UI framework / library agnostic way, so gluing it to a React or Svelte component should be trivial.
 
+## Self learning
+
+It's self learning in the sense that it ranks items higher the more you pick them for a certain input. To follow trends and have new commands
+have achance to get to the top fairly quick, it doesn't keep the execution history forever but normalizes it from time to time. See [packages/core/src/exec-graph.ts](packages/core/src/exec-graph.ts) for the implementation of this.
+
 ## Demo
 
 Here's a demo of the Svelte implementation of the core: [https://ti99l.csb.app](https://ti99l.csb.app)
