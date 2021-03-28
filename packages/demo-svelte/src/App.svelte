@@ -111,12 +111,12 @@
 <div class="wrapper">
     <h1>🎉 @actus/svelte 🎉</h1>
     <div class="info">
-        - Press the key "<strong>p</strong>" or "<strong>o</strong>" to open an actus bar, hit <strong>Escape</strong>
+        - Press the key <code>p</code> or <code>o</code> to open an actus bar, hit <code>Escape</code>
         to close.
         <br />
         - There are two of them on this page, in different themes but with the same commands.
         <br />
-        - Most commands match the letter "e".
+        - Most commands match the letter <code>e</code>.
         <br />
         - Start with <code>:</code> to see a list of emojis 😀
         <br />
@@ -126,6 +126,12 @@
         <br />
         - To view a <strong>dynamically matched command</strong>, type a hex color in the <code>#abc</code> or
         <code>#112233</code> format.
+        <br />
+        <br />
+        <em
+            >It's also self learning, the more you choose a certain result for a certain input, the higher in the list
+            it will be.</em
+        >
     </div>
     <div class="palettes">
         <div class="holder">
@@ -172,19 +178,20 @@
         position: relative;
     }
     .info {
-        border: 1px solid #ccc;
         border-radius: 2px;
         padding: 1rem;
-        background: #ddd;
+        background: #fafafa;
         line-height: 1.4rem;
     }
     .palettes {
-        position: relative;
+        position: absolute;
         display: flex;
         width: 100%;
+        top: 40px;
+        left: 40px;
     }
     .holder {
-        width: 50%;
+        width: 40%;
         float: left;
         padding-top: 50px;
         font-family: Arial, Helvetica, sans-serif;
@@ -192,12 +199,20 @@
     :global(body) {
         font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande", "Lucida Sans Unicode", Geneva, Verdana,
             sans-serif;
-        background: lightgrey;
+        background: skyblue;
         margin: 0;
         padding: 0;
+        font-size: 14px;
     }
     .link {
-        position: absolute;
+        position: fixed;
         bottom: 100px;
+    }
+    code {
+        border: 1px solid grey;
+        border-radius: 2px;
+        background-color: #efefef;
+        padding: 1px 2px;
+        font-size: 0.9em;
     }
 </style>
