@@ -1,7 +1,16 @@
 import type { ParserResult } from "./types";
-import type { StoreValue, CharacterEntryGraph, CallRecord, EntryGraph } from "./exec-graph.types";
+import type {
+    StoreValue,
+    CharacterEntryGraph,
+    CallRecord,
+    LoadGraphFn,
+    PersistGraphFn,
+    CharactersEntryGraph,
+} from "./exec-graph.types";
 
 const LS_KEY = "actus-exec-graph";
+const CALL_LIMIT = 100;
+const CALL_NORMALIZE_BY = 0.7;
 
 function store(key: string, value: StoreValue): void {
     if (typeof localStorage === "undefined") {
@@ -29,17 +38,21 @@ function load(key: string): StoreValue {
     }
 }
 
-export function getHistoricCallsForInput(parsedInput: ParserResult): CallRecord[] {
-    const currentGraph = load(LS_KEY);
+export function getHistoricCallsForInput(parsedInput: ParserResult, loadGraph?: LoadGraphFn): CallRecord[] {
+    const currentGraph = loadGraph != null ? loadGraph() : load(LS_KEY);
     const graphEndpoint = traverseToInput(parsedInput, currentGraph);
     return graphEndpoint.commands || [];
 }
 
-export function persistExec(parsedInput: ParserResult, commandId: string): void {
-    const currentGraph = load(LS_KEY);
-    const graphEndpoint = traverseToInput(parsedInput, currentGraph);
-    graphEndpoint["commands"] = setOrUpdateCallRecord(graphEndpoint["commands"], commandId);
-    store(LS_KEY, currentGraph);
+export function persistExec(
+    parsedInput: ParserResult,
+    commandId: string,
+    loadGraph?: LoadGraphFn,
+    persistGraph?: PersistGraphFn
+): void {
+    let currentGraph = loadGraph != null ? loadGraph() : load(LS_KEY);
+    currentGraph = updateCallStats(parsedInput, commandId, currentGraph);
+    persistGraph != null ? persistGraph(LS_KEY, currentGraph) : store(LS_KEY, currentGraph);
 }
 
 function traverseToInput(parsedInput: ParserResult, graph: StoreValue): CharacterEntryGraph {
@@ -56,13 +69,20 @@ function traverseToInput(parsedInput: ParserResult, graph: StoreValue): Characte
     return graphEndpoint;
 }
 
-function setOrUpdateCallRecord(callRecords: CallRecord[], id: string): CallRecord[] {
+function updateCallStats(input: ParserResult, id: string, graph: StoreValue): StoreValue {
+    const graphEndpoint = traverseToInput(input, graph);
+    const callRecords: CallRecord[] = graphEndpoint["commands"];
+
     const exists = callRecords.findIndex((r) => r.id === id);
     if (exists > -1) {
         callRecords[exists].calls++;
-        return callRecords;
+        if (callRecords[exists].calls >= CALL_LIMIT) {
+            normalizeAllCalls(graph.entrygraph.next);
+        }
+        return graph;
     }
-    return callRecords.concat({ id, calls: 1 });
+    callRecords.push({ id, calls: 1 });
+    return graph;
 }
 
 function createPropIfNotExists(obj: any, prop: string, defaultVal: any) {
@@ -70,4 +90,22 @@ function createPropIfNotExists(obj: any, prop: string, defaultVal: any) {
         obj[prop] = defaultVal;
     }
     return obj;
+}
+
+function normalizeAllCalls(charsGraph: CharactersEntryGraph): void {
+    const keys = Object.keys(charsGraph);
+    keys.forEach((key) => {
+        if (charsGraph[key].commands.length) {
+            for (let i = charsGraph[key].commands.length - 1; i >= 0; i--) {
+                charsGraph[key].commands[i].calls = Math.floor(charsGraph[key].commands[i].calls * CALL_NORMALIZE_BY);
+                // Cleanup commands with 0 calls
+                if (charsGraph[key].commands[i].calls < 1) {
+                    charsGraph[key].commands.splice(i, 1);
+                }
+            }
+        }
+        if (charsGraph[key].next) {
+            normalizeAllCalls(charsGraph[key].next);
+        }
+    });
 }

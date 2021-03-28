@@ -49,7 +49,3 @@ Have a look at [packages/core/src/selection-machine.ts](packages/core/src/select
 
 Here's a visaulization of the machine:
 ![vis](packages/core/images/vis.png)
-
-## Todo
-
-[ ] Make it self learning using a in memory tree that can be loaded and downloaded

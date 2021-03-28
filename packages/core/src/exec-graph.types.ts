@@ -17,3 +17,6 @@ export type EntryGraph = {
 export type StoreValue = {
     entrygraph: EntryGraph;
 };
+
+export type LoadGraphFn = () => StoreValue;
+export type PersistGraphFn = (key: string, graph: StoreValue) => void;
