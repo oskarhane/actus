@@ -1,12 +1,6 @@
 <script lang="ts">
     import { createEventDispatcher, onMount, tick } from "svelte";
-    import {
-        interpret,
-        filterAndSort,
-        selectionMachine,
-        setupInteractionListener,
-        setupOpenListener,
-    } from "@actus/core";
+    import { interpret, selectionMachine, setupInteractionListener, setupOpenListener } from "@actus/core";
     import type { Theme } from "./types";
     import type {
         Command,
@@ -20,7 +14,6 @@
         ParserResult,
         SelectEvent,
         SetCommandsEvent,
-        SortFunction,
         MachineEvents,
         MachineState,
     } from "@actus/core/dist/types";
@@ -42,7 +35,6 @@
         "--color": "",
         "--scale": "",
     };
-    export let sortFn: SortFunction = filterAndSort;
     export let commands: Command[] = [];
     export let toggleKey: string = "p";
     export let placeholder: string = "Type something";
@@ -53,7 +45,6 @@
             ...selectionMachine.context,
             commands,
             toggleKey,
-            sortFn,
         })
     ).start();
 

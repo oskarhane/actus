@@ -42,7 +42,6 @@ export type MachineContextState = {
     commands: Command[];
     input: string;
     parsedInput: ParserResult;
-    sortFn: SortFunction;
 };
 export interface ExecDoneEvent extends EventObject {
     type: "EXEC_DONE";
@@ -98,3 +97,12 @@ export type TransistionListener = StateListener<
     { value: any; context: MachineContextState }
 >;
 export type MachineState = State<MachineContextState, MachineEvents>;
+
+export enum MatchScore {
+    HISTORY = 1,
+    EXACT = 10,
+    STARTS = 3,
+    CONTAINS = 2,
+    ACRONYM = 2,
+    NO = 0,
+}

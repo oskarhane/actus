@@ -1,5 +1,6 @@
 import { createMachine, assign, Sender } from "xstate";
-import { parseInput } from "./rank";
+import { persistExec } from "./exec-graph";
+import { parseInput, rank } from "./rank";
 import type {
     ExecDoneEvent,
     InputEvent,
@@ -22,7 +23,6 @@ export const selectionMachine = createMachine<MachineContextState, MachineEvents
             resultIds: [],
             selectedId: "",
             toggleKey: "p",
-            sortFn: (c) => c,
         },
         states: {
             closed: {
@@ -104,6 +104,7 @@ export const selectionMachine = createMachine<MachineContextState, MachineEvents
                 if (executedCommand && executedCommand.length) {
                     executedCommand[0].exec(executedCommand[0], parsedInput);
                 }
+                persistExec(parsedInput, executedCommand[0].id);
                 const sendEvent: ExecDoneEvent = { type: "EXEC_DONE", id, input: parsedInput };
                 callback(sendEvent);
             },
@@ -114,7 +115,7 @@ export const selectionMachine = createMachine<MachineContextState, MachineEvents
                 parsedInput: (_, event: InputEvent) => parseInput(event.input),
                 resultIds: (context, event: InputEvent) => {
                     if (event.input.length) {
-                        const results = context.sortFn(context.commands, event.input);
+                        const results = rank(context.commands, event.input);
                         if (results !== null) {
                             return results.map((r) => r.id);
                         }
@@ -132,7 +133,7 @@ export const selectionMachine = createMachine<MachineContextState, MachineEvents
                 commands: (_, event: SetCommandsEvent) => event.commands,
                 resultIds: (context, event: SetCommandsEvent) => {
                     if (context.input.length) {
-                        const results = context.sortFn(event.commands, context.input);
+                        const results = rank(event.commands, context.input);
                         if (results !== null) {
                             return results.map((r) => r.id);
                         }
