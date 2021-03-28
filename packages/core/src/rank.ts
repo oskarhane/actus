@@ -4,11 +4,6 @@ import grammar from "./grammar/input-parser";
 import type { Command, ParserResult, RankCommand } from "./types";
 import { MatchScore } from "./types";
 
-const FULL = 10;
-const FIRST_IN_WORDS = 2;
-const STARTS = 3;
-const HAS = 2;
-
 export function parseInput(input: string): ParserResult {
     try {
         const parser = new nearley.Parser(nearley.Grammar.fromCompiled(grammar));
@@ -50,8 +45,7 @@ export function rank(commands: Command[], input: string): Command[] | null {
             }
         )
         .filter((c) => c.rank > 0)
-        .sort((a, b) => b.rank - a.rank)
-        .map((c): Command => c);
+        .sort((a, b) => b.rank - a.rank);
     return r;
 }
 

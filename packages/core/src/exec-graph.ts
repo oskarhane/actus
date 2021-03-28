@@ -20,7 +20,7 @@ function load(key: string): StoreValue {
         const jsonStore = localStorage.getItem(key);
         const value = JSON.parse(jsonStore) as StoreValue;
         if (value == null) {
-            throw new Error("Empty storage");
+            return { entrygraph: { next: {} } };
         }
         return value;
     } catch (e) {
