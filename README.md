@@ -52,5 +52,5 @@ If the user types something in the command palette input but closes it without e
 
 Have a look at [packages/core/src/selection-machine.ts](packages/core/src/selection-machine.ts) to see the machine and its services / actions / guards implementations.
 
-Here's a visaulization of the machine:
+Here's a visualization of the machine:
 ![vis](packages/core/images/vis.png)
