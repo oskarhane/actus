@@ -1,6 +1,9 @@
 {
     "name": "actus-root",
     "private": true,
+    "scripts": {
+        "bootstrap": "lerna bootstrap"
+    },
     "devDependencies": {
         "lerna": "^3.22.1"
     }
