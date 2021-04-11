@@ -1,6 +1,5 @@
 <script>
     import Actus from "@actus/svelte";
-    let id = 0;
 
     const random = Math.round(Math.random() * 1000);
     let ip = "";
@@ -92,20 +91,17 @@
             description: `Press enter to add to clipboard`,
             exec: (cmd, parsedCmd) => setClipboard("🎉"),
         },
+        {
+            id: "smile4",
+            title: (r) => "🌮 :taco:",
+            description: `Press enter to add to clipboard`,
+            exec: (cmd, parsedCmd) => setClipboard("🌮"),
+        },
     ];
 
     function didExec({ detail: { id, input } }) {
         console.log("Executed { id, input }: ", { id, input });
     }
-    function addCommand(title, description) {
-        commands = commands.concat({
-            id: `id-${id}`,
-            title,
-            description,
-            exec: () => {},
-        });
-    }
-    setInterval(() => addCommand(`hello ${id++}`, `description`), 5000);
 </script>
 
 <div class="wrapper">
@@ -122,15 +118,13 @@
         <br />
         - Check <code>App.svelte</code> for available commands, and to add your own.
         <br />
-        - New "hello x" commands are added every 5 seconds to show how that's handled.
-        <br />
         - To view a <strong>dynamically matched command</strong>, type a hex color in the <code>#abc</code> or
         <code>#112233</code> format.
         <br />
         <br />
         <em
-            >It's also self learning, the more you choose a certain result for a certain input, the higher in the list
-            it will be.</em
+            >It's also self learning, the more times you execute a certain result for a certain input, the higher in the
+            list it will be.</em
         >
     </div>
     <div class="palettes">
@@ -149,8 +143,8 @@
                     "--result-description-color": "#aaa",
                     "--active-result-description-color": "#fff",
                     "--background-color": "#fff",
-                    "--active-result-background-color": "rgba(110, 206, 17, 1)",
-                    "--scale": "1.3",
+                    "--active-result-background-color": "DarkSeaGreen",
+                    "--scale": "1.2",
                 }}
             />
         </div>
@@ -180,26 +174,21 @@
     .info {
         border-radius: 2px;
         padding: 1rem;
-        background: #fafafa;
+        background: #f3f3f3;
         line-height: 1.4rem;
     }
     .palettes {
         position: absolute;
         display: flex;
-        width: 100%;
-        top: 40px;
-        left: 40px;
+        top: 60px;
     }
     .holder {
-        width: 40%;
-        float: left;
-        padding-top: 50px;
         font-family: Arial, Helvetica, sans-serif;
     }
     :global(body) {
         font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande", "Lucida Sans Unicode", Geneva, Verdana,
             sans-serif;
-        background: skyblue;
+        background: DarkSeaGreen;
         margin: 0;
         padding: 0;
         font-size: 14px;
