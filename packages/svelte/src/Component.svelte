@@ -1,5 +1,6 @@
 <script lang="ts">
     import { createEventDispatcher, onMount, tick } from "svelte";
+    import { fade, slide } from "svelte/transition";
     import { interpret, selectionMachine, setupInteractionListener, setupOpenListener } from "@actus/core";
     import type { Theme } from "./types";
     import type {
@@ -184,6 +185,7 @@
 
 {#if $selectionService.matches("open")}
     <div
+        transition:fade={{ duration: 150 }}
         bind:this={outerElement}
         class="wrapper"
         style={Object.entries(theme)
@@ -200,7 +202,7 @@
             />
         </div>
         {#if results.length}
-            <div class="results">
+            <div class="results" transition:slide={{ duration: 150 }}>
                 {#each results as result, resultIndex}
                     <div
                         data-testid={`test-id-${resultIndex}`}

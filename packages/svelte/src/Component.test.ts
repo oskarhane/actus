@@ -1,4 +1,4 @@
-import { render } from "@testing-library/svelte";
+import { render, waitForElementToBeRemoved } from "@testing-library/svelte";
 import userEvent from "@testing-library/user-event";
 import Component from "./Component.svelte";
 import { parseInput } from "@actus/core";
@@ -23,7 +23,7 @@ test("should show single command and execute", async () => {
     userEvent.keyboard("{Escape}");
     await flush();
 
-    expect(() => getByPlaceholderText(/type for the/i)).toThrow();
+    await waitForElementToBeRemoved(() => getByPlaceholderText(/type for the/i));
 
     // Open again
     userEvent.keyboard("o");
@@ -38,7 +38,7 @@ test("should show single command and execute", async () => {
     userEvent.keyboard("{enter}");
     await flush();
     expect(exec).toHaveBeenCalledWith(command1, ["ti"]);
-    expect(() => getByPlaceholderText(/type for the/i)).toThrow();
+    await waitForElementToBeRemoved(() => getByPlaceholderText(/type for the/i));
 });
 
 test("stepping should work", async () => {
@@ -136,7 +136,7 @@ test("should not break on non parseable input", async () => {
     await flush();
 
     expect(exec).toHaveBeenCalledWith(command1, ["x", { e: null }]);
-    expect(() => getByText(/xxx/)).toThrow();
+    await waitForElementToBeRemoved(() => getByText(/xxx/));
 });
 test("should keep open on inside clicks and close on outer", async () => {
     const exec = jest.fn();
@@ -160,7 +160,7 @@ test("should keep open on inside clicks and close on outer", async () => {
     userEvent.click(document.body);
     await flush();
 
-    expect(() => getByPlaceholderText(/type for/i)).toThrow();
+    await waitForElementToBeRemoved(() => getByPlaceholderText(/type for the/i));
 
     // open again
     userEvent.keyboard("o");
@@ -175,7 +175,7 @@ test("should keep open on inside clicks and close on outer", async () => {
     await flush();
 
     expect(exec).toHaveBeenCalledTimes(1);
-    expect(() => getByPlaceholderText(/type for/i)).toThrow();
+    await waitForElementToBeRemoved(() => getByPlaceholderText(/type for the/i));
 });
 test("should support dynamic matching commands", async () => {
     const exec = jest.fn();
@@ -263,7 +263,7 @@ test("commands should be able to require arguments to be specified", async () =>
     await flush();
 
     // Should be closed now
-    expect(() => getByPlaceholderText(/type for the/i)).toThrow();
+    await waitForElementToBeRemoved(() => getByPlaceholderText(/type for the/i));
     expect(exec).toHaveBeenCalledTimes(1);
     expect(exec).toHaveBeenCalledWith(c1, ["t", { c: "1" }]);
 });
