@@ -23,6 +23,7 @@ export const selectionMachine = createMachine<MachineContextState, MachineEvents
             resultIds: [],
             selectedId: "",
             toggleKey: "p",
+            ctrlKey: false,
         },
         states: {
             closed: {
