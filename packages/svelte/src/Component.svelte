@@ -211,6 +211,7 @@
                         class:active={$selectionService.context.selectedId === result.id}
                         on:mousedown={() => selectionService.send(execEvent(result.id))}
                         on:mouseover={() => selectionService.send(selectEvent(result.id))}
+                        on:focus={() => selectionService.send(selectEvent(result.id))}
                         class="result"
                     >
                         {renderTitle(result.title)}
