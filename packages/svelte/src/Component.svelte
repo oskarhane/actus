@@ -38,6 +38,7 @@
     };
     export let commands: Command[] = [];
     export let toggleKey: string = "p";
+    export let ctrlKey: boolean = false;
     export let placeholder: string = "Type something";
 
     // Start machine
@@ -46,6 +47,7 @@
             ...selectionMachine.context,
             commands,
             toggleKey,
+            ctrlKey,
         })
     ).start();
 

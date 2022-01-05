@@ -26,6 +26,7 @@ All props except `commands` are optional.
 <Actus
     {commands}
     toggleKey="p"
+    ctrlKey={false}
     placeholder="Type your best commands"
     theme={{
         "--color": "rgba(212, 208, 199, 1.00)",

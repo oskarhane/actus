@@ -39,6 +39,7 @@ export type MachineContextState = {
     resultIds: string[];
     selectedId: string;
     toggleKey: string;
+    ctrlKey: boolean;
     commands: Command[];
     input: string;
     parsedInput: ParserResult;

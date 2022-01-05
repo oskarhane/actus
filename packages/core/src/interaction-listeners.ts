@@ -41,7 +41,10 @@ export function setupOpenListener(service: Interpreter<MachineContextState, any,
         if (e.target.tagName === "INPUT") {
             return;
         }
-        if (key === service.machine.context.toggleKey) {
+        if (
+            key === service.machine.context.toggleKey && 
+            (!service.machine.context.ctrlKey || e.ctrlKey || e.metaKey)
+        ) {
             e.preventDefault();
             service.send({ type: "OPEN" } as OpenEvent);
         }
