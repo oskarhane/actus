@@ -49,6 +49,6 @@ export function setupOpenListener(service: Interpreter<MachineContextState, any,
             service.send({ type: "OPEN" } as OpenEvent);
         }
     };
-    document.addEventListener("keyup", toggleFn);
-    return () => document.removeEventListener("keyup", toggleFn);
+    document.addEventListener("keydown", toggleFn);
+    return () => document.removeEventListener("keydown", toggleFn);
 }
